@@ -1,0 +1,84 @@
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  max-width: 100%;
+  background: var(--baseD);
+  overflow-x: hidden;
+  -webkit-user-select: none !important;
+     -moz-user-select: none !important;
+      -ms-user-select: none !important;
+          user-select: none !important;
+}
+
+/* ############################### */
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+/* ############################### */
+body[data-aos-easing=sleek] [data-aos] {
+  transition-timing-function: var(--sleek);
+}
+body::-webkit-scrollbar {
+  width: 10px;
+}
+body::-webkit-scrollbar-track {
+  background: var(--baseD);
+}
+body::-webkit-scrollbar-thumb {
+  background: var(--basesecondaryD);
+  border-radius: 10px;
+}
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--accentD);
+}
+body::-webkit-scrollbar-thumb:active {
+  background: var(--accentsecondaryD);
+}
+
+[data-aos][data-aos][data-aos-easing=sleek] {
+  transition-timing-function: var(--sleek);
+}
+
+@font-face {
+  font-family: Inter;
+  src: url(../font/Inter.var.woff2) format("truetype-variations");
+  font-weight: 1 1000;
+  letter-spacing: -62px;
+}
+@font-face {
+  font-family: Syne;
+  src: url(../font/Syne[wght].ttf) format("truetype-variations");
+  font-weight: 1 1000;
+}
+@font-face {
+  font-family: JetBrains Mono;
+  src: url(../font/JetBrainsMono[wght].ttf) format("truetype-variations");
+  font-weight: 1 1000;
+}
+a {
+  text-decoration: none !important;
+  color: initial;
+}
+a:link, a:visited {
+  text-decoration: none !important;
+  color: currentColor;
+}
+
+:root {
+  --loaderD: url("../../img/local/spinnerD.gif");
+  --loaderL: url("../../img/local/spinnerL.gif");
+  --display: Syne;
+  --content: Inter;
+  --contentsecondary: JetBrains Mono;
+  --sleek: cubic-bezier(0.03, 0.77, 0.34, 1);
+  --accel: cubic-bezier(0.72, 0.06, 0.96, 0.57);
+  --anchorhead: cubic-bezier(0.24, 0.01, 0.01, 1);
+  --bounce: cubic-bezier(0.57, 0.07, 0.41, 1.95);
+  --brightnessD: brightness(1.2);
+  --brightnessL: brightness(.8);
+}/*# sourceMappingURL=global.css.map */

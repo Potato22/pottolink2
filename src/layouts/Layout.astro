@@ -1,22 +1,52 @@
+---
+---
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Potto</title>
+    <meta name="generator" content={Astro.generator} />
+    <meta name="title" content="Potto" />
+    <meta name="description" content="As weird as a name can get." />
+    <!-- <link
+			rel="icon"
+			type="image/png"
+			sizes="500x500"
+			href="assets/img/local/pottoceramic.png"
+		/> -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- OG -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pottoart.uk/" />
+    <meta property="og:title" content="Potto" />
+    <meta property="og:description" content="As weird as a name can get." />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/Potato22/pottolink/master/assets/img/content/trainstation.jpg"
+    />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://pottoart.uk/" />
+    <meta property="twitter:title" content="Potto" />
+    <meta
+      property="twitter:description"
+      content="As weird as a name can get."
+    />
+    <meta
+      property="twitter:image"
+      content="https://raw.githubusercontent.com/Potato22/pottolink/master/assets/img/content/trainstation.jpg"
+    />
+  </head>
+  <body>
+
+    <slot />
+    
+  </body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+<style></style>
