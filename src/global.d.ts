@@ -1,3 +1,5 @@
+import type { HTMLAttributes } from 'astro/types';
+
 declare global {
   interface Window {
     quirkyLoader: {
@@ -6,4 +8,14 @@ declare global {
     };
   }
 }
-export {};
+
+declare module 'astro/jsx-runtime' {
+  namespace JSX {
+    interface IntrinsicElements {
+      video: JSX.IntrinsicElements['video'] & { alt?: string };
+    }
+  }
+}
+
+
+export { };

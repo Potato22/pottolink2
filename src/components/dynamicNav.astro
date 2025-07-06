@@ -1,0 +1,414 @@
+<div class="dimmer">
+  <div class="creationdialog">
+    <div class="exit">
+      <div class="xcont">
+        <div class="x"></div>
+      </div>
+    </div>
+    <div class="cbuttongroup">
+      <a href="#gall">
+        <div class="illus cbutton block s2-1">GALLERY</div>
+      </a>
+      <a href="#comm">
+        <div class="anim cbutton block s2-2">COMMISSION</div>
+      </a>
+      <a href="#trivia">
+        <div class="sket cbutton block s2-3">TRIVIA</div>
+      </a>
+      <a href="#extra">
+        <div class="extra cbutton block s2-4">EXTRA</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<nav class="dynamicnav navOff">
+  <a id="nlogo">
+    <svg viewBox="0 0 132.29 132.29">
+      <g transform="translate(108.91 -397.83)">
+        <path
+          class="npotto"
+          d="m-81.612 397.83c-15.122 0-27.297 12.174-27.297 27.297v77.699c0 15.122 12.174 27.297 27.297 27.297h30.661c4.5367 0 8.1886-3.6525 8.1886-8.1892v-23.31c0-4.5367 3.6525-8.1886 8.1892-8.1886h30.66c15.122 0 27.297-12.174 27.297-27.297v-38.011c0-15.122-12.174-27.297-27.297-27.297zm0 10.054h77.699c9.5576 0 17.242 7.6848 17.242 17.242v35.441c0 10.976-8.8364 19.813-19.813 19.813h-28.09c-10.101 0-18.243 8.1411-18.243 18.243v13.256c0 4.5367-3.652 8.1892-8.1886 8.1892h-20.606c-9.5576 0-17.242-7.6848-17.242-17.242v-77.699c0-9.5576 7.6848-17.242 17.242-17.242z"
+          stroke-width=".22038"></path>
+      </g>
+    </svg>
+  </a>
+  <div class="buttongroup">
+    <a href="#about">
+      <div class="nbutton about">
+        Hello.
+        <span class="strikethrough s1"></span>
+      </div>
+    </a>
+    <div class="nbutton creation">
+      [:::]
+      <span class="strikethrough s2"></span>
+    </div>
+    <!-- <div class="nbutton filterDropdown">[Content Filter]</div> -->
+    <!-- <div class="filterDrop">
+      <div class="filterButtonGroup">
+        <label class="FTbutton" id="nsfw-FT">
+          <input type="checkbox" id="nsfwFTT" class="filterCheckbox" />
+          <div class="FTicon material-symbols-rounded icon">explicit</div>
+          <div class="FTname">NSFW</div>
+        </label>
+        <label class="FTbutton" id="sketch-FT">
+          <input type="checkbox" id="sketchFTT" class="filterCheckbox" />
+          <div class="FTicon material-symbols-rounded icon">draw</div>
+          <div class="FTname">Sketches</div>
+        </label>
+        <label
+          class="FTbutton"
+          id="versioning-FT"
+          title="Hides variations of any pieces. When turned on, only displays the 'origin' pieces."
+        >
+          <input type="checkbox" id="versioningFTT" class="filterCheckbox" />
+          <div class="FTicon material-symbols-rounded icon">stacks</div>
+          <div class="FTname">Versions</div>
+        </label>
+      </div>
+      <div id="reloadButton">Apply Filters</div> -->
+    <!-- <div class="filterWindowTitle">Filter toggles</div> -->
+  </div>
+</nav>
+
+<script>
+  // Helper for fade in/out using classes
+  //   function fadeIn(el: HTMLElement, duration = 300) {
+  //     el.style.opacity = "0";
+  //     el.style.display = "flex";
+  //     setTimeout(() => {
+  //       el.style.transition = `opacity ${duration}ms`;
+  //       el.style.opacity = "1";
+  //     }, 10);
+  //   }
+  //   function fadeOut(el: HTMLElement, duration = 300) {
+  //     el.style.transition = `opacity ${duration}ms`;
+  //     el.style.opacity = "0";
+  //     setTimeout(() => {
+  //       el.style.display = "none";
+  //     }, duration);
+  //   }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    let winH = window.innerHeight;
+    const nav = document.querySelector(".dynamicnav");
+
+    function onScrollResize() {
+      const dimmer = document.querySelector(".dimmer") as HTMLElement | null;
+      const creationDialog = document.querySelector(".creationdialog");
+      const X = document.querySelector(".xcont") as HTMLElement | null;
+      if (!nav) return;
+      if (window.scrollY > winH) {
+        nav.classList.remove("navOff");
+      } else {
+        nav.classList.add("navOff");
+      }
+    }
+    window.addEventListener("scroll", onScrollResize);
+    window.addEventListener("resize", () => {
+      winH = window.innerHeight;
+      onScrollResize();
+    });
+    onScrollResize();
+
+    // Creation dialog logic
+    const creation = document.querySelector(".creation");
+    const dimmer = document.querySelector(".dimmer") as HTMLElement | null;
+    const creationDialog = document.querySelector(".creationdialog");
+    const xconts = document.querySelectorAll(".xcont, .cbutton");
+    const X = document.querySelector(".xcont") as HTMLElement | null;
+
+    if (creation && dimmer && creationDialog) {
+      creation.addEventListener("click", () => {
+        dimmer.classList.add("active");
+        creationDialog.classList.add("cdactive");
+        setTimeout(() => {
+          X?.classList.add("xActive");
+        }, 200);
+      });
+      xconts.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          creationDialog.classList.remove("cdactive");
+          dimmer.classList.remove("active");
+          X?.classList.remove("xActive");
+        });
+      });
+    }
+
+    // Section highlight logic
+    function chapter() {
+      // Helper to get offset safely
+      function getOffsetTop(id: string): number {
+        const el = document.getElementById(id);
+        if (!el) return Infinity;
+        return el.getBoundingClientRect().top;
+      }
+      const offsets = {
+        about: getOffsetTop("about"),
+        create: getOffsetTop("create"),
+        gall: getOffsetTop("gall"),
+        comm: getOffsetTop("comm"),
+        trivia: getOffsetTop("trivia"),
+        extra: getOffsetTop("extra"),
+      };
+      // State for which section is active
+      const bools: Record<string, boolean> = {
+        aboutbool: false,
+        createbool: false,
+        gallbool: false,
+        commbool: false,
+        triviabool: false,
+        extrabool: false,
+      };
+      const sectionsBoolers = [
+        { offset: offsets.about, bool: "aboutbool" },
+        { offset: offsets.create, bool: "createbool", prevBool: "aboutbool" },
+        { offset: offsets.gall, bool: "gallbool" },
+        { offset: offsets.comm, bool: "commbool", prevBool: "gallbool" },
+        { offset: offsets.trivia, bool: "triviabool", prevBool: "commbool" },
+        { offset: offsets.extra, bool: "extrabool", prevBool: "triviabool" },
+      ];
+      sectionsBoolers.forEach((section) => {
+        if (section.offset <= 0) {
+          bools[section.bool] = true;
+          if (section.prevBool) bools[section.prevBool] = false;
+        } else {
+          bools[section.bool] = false;
+        }
+      });
+      const sections = [
+        { bool: bools.aboutbool, selector: ".s1" },
+        { bool: bools.createbool, selector: ".s2" },
+        { bool: bools.gallbool, selector: ".s2-1" },
+        { bool: bools.commbool, selector: ".s2-2" },
+        { bool: bools.triviabool, selector: ".s2-3" },
+        { bool: bools.extrabool, selector: ".s2-4" },
+      ];
+      sections.forEach((section) => {
+        const el = document.querySelector(section.selector);
+        if (!el) return;
+        if (section.bool) {
+          el.classList.add("activestrike");
+        } else {
+          el.classList.remove("activestrike");
+        }
+      });
+    }
+    chapter();
+    window.addEventListener("scroll", chapter);
+  });
+</script>
+
+<style lang="scss">
+  .dynamicnav {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem 0 0;
+    z-index: 5;
+    background: rgba(var(--baseRGB), 0.8);
+    backdrop-filter: blur(120px);
+    transition: background 1s var(--sleek);
+    transition: transform 0.2s var(--sleek);
+    height: 50px;
+  }
+
+  .navOff {
+    background: var(--base);
+    transition: all 0.2s var(--sleek);
+  }
+
+  .navHide {
+    transition: all 0.2s 0.5s var(--sleek);
+    transform: translateY(-40px);
+  }
+
+  #nlogo {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    transform: scale(0.8);
+  }
+
+  .npotto {
+    width: 100%;
+    height: 100%;
+    fill: var(--fore);
+    fill-opacity: 1;
+  }
+
+  .buttongroup {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .nbutton {
+    background: rgba(0, 0, 0, 0);
+    color: var(--fore);
+    margin: 0 0.5rem;
+    font-family: var(--contentSecondary);
+    transition:
+      background 0.1s,
+      color 0.2s;
+    font-weight: 100;
+    border-radius: 0 5px 0 0;
+    padding: 0.3rem;
+
+    /*
+    &:hover::before {
+      content: "::"
+    }*/
+
+    &:hover {
+      background: var(--fore);
+      color: var(--base);
+      font-weight: 900;
+
+      .strikethrough {
+        background-color: var(--base);
+      }
+    }
+  }
+
+  .strikethrough {
+    position: relative;
+    display: block;
+    height: 3px;
+    background-color: var(--fore);
+    width: 0%;
+    transition: all 0.5s var(--sleek);
+  }
+
+  .activestrike {
+    width: 100%;
+  }
+
+  .dimmer {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    top: 0;
+    position: fixed;
+    z-index: 6;
+    display: flex;
+    justify-content: flex-end;
+    //padding: 4em 2em 2em 0em;
+    transition: all 0.2s var(--sleek);
+    pointer-events: none;
+
+    &.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+
+  .creationdialog {
+    width: 100%;
+    height: 100%;
+    background: rgba(var(--baseRGB), 0.5);
+    backdrop-filter: blur(300px);
+    display: grid;
+    place-items: center;
+    animation: contentdialog 0.8s forwards var(--sleek);
+    opacity: 0;
+    transition: all 0.3s var(--accel);
+    transform: scale(1.5);
+    & a {
+      text-decoration: none;
+    }
+  }
+
+  .cdactive {
+    opacity: 1;
+    transition: all 0.3s var(--sleek);
+    transform: scale(1);
+  }
+
+  .cbutton {
+    text-align: center;
+    color: var(--fore);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 2.5rem;
+    transition: font-weight 0.5s var(--sleek);
+    margin: 1rem 0;
+
+    &:hover {
+      font-weight: 800;
+      color: var(--accent);
+    }
+  }
+
+  .blockactive {
+    font-weight: 800;
+    transition: all 0.5s var(--sleek);
+    color: var(--primSecondary);
+  }
+
+  .exit {
+    width: 100%;
+    height: 40px;
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+  }
+
+  .xcont {
+    width: 40px;
+    height: 40px;
+    margin-right: 2rem;
+    background: none;
+    cursor: pointer;
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 20px;
+    padding: 2em;
+    border: 1px solid var(--fore);
+    transition: transform 0.4s var(--sleek), background 0.2s var(--sleek), opacity .1s var(--sleek);
+    transform: translateX(50%);
+    opacity: 0;
+    cursor: pointer;
+
+    &.xActive {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    &:hover {
+      background: var(--fore);
+      & .x,
+      .x::after {
+        background: var(--base);
+      }
+    }
+  }
+
+  .x {
+    position: absolute;
+    background: var(--fore);
+    width: 4px;
+    transform: rotate(45deg);
+    height: 40px;
+    transition: 0.2s var(--sleek);
+
+    &::after {
+      content: "";
+      background: var(--fore);
+      width: 4px;
+      height: 100%;
+      transform: rotate(90deg);
+      position: absolute;
+      transition: 0.2s var(--sleek);
+    }
+  }
+</style>

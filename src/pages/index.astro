@@ -1,10 +1,11 @@
 ---
-import Home from "../layouts/default.astro";
+import Default from "../layouts/default.astro";
 import GhostSpacer from "../components/sections/GhostSpacer.astro";
 import Hero from "../components/sections/Hero.astro";
-import MainMenu from "../components/sections/MainMenu.astro";
+import Home from "../components/sections/Home.astro";
 import ImageZoom from "../components/imageZoom.astro";
 import ScreenPrompt from "../components/screenPrompt.astro";
+import DynamicNav from "../components/dynamicNav.astro";
 
 import "../styles/root.scss";
 
@@ -12,13 +13,14 @@ import "../styles/root.scss";
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Home>
+<Default>
   <ScreenPrompt />
   <ImageZoom />
   <Hero />
   <GhostSpacer />
-  <MainMenu />
-</Home>
+  <DynamicNav />
+  <Home />
+</Default>
 
 <script>
   //document.documentElement.setAttribute('data-theme', 'light');

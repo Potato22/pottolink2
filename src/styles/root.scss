@@ -280,6 +280,46 @@ hr {
   }
 }
 
+.galleryLoadingInd {
+  position: relative;
+  color: var(--fore);
+  opacity: .5;
+  height: 0;
+  font-family: var(--contentSecondary);
+  text-align: center;
+  //animation: holdon .5s 12, toolong 6s linear forwards 3s;
+}
+
+.holdon {
+  animation: bouncy .5s infinite
+}
+
+@keyframes holdon {
+  0% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+
+  12% {
+    transform: translateY(1px);
+  }
+
+  24% {
+    transform: translateY(6px);
+  }
+
+  36% {
+    transform: translateY(15px);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+
+}
+
 @keyframes bouncy {
   0% {
     transform: translateY(0px);

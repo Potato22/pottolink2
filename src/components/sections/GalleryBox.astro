@@ -1,110 +1,21 @@
 ---
 import Gridbox from "../../layouts/Gridbox.astro";
-import Cardobject from "../../components/Card-object.astro";
 import CardObject from "../../components/Card-object.astro";
-import B2GalleryIndex from "../b2Gallery_index.astro";
+import B2Gallery from "../b2Gallery.astro";
 ---
 
-<div class="mainSelections" id="menu">
+<div class="centering">
   <div id="pageLabel">
-    <div class="menuMessageBox mini">Welcome!</div>
+    <div class="menuMessageBox mini">Gallery</div>
   </div>
 
-  <Gridbox>
-    <Cardobject
-      image={{
-        src: "/content/illus/artist.jpg",
-        alt: "Artist mary",
-        position: "center",
-      }}
-      size="extraTall"
-    />
-    <Cardobject
-      isTextCard
-      title="Hello!"
-      titleSize="bigger"
-      content="Here are all the places you can find me."
-      contentSize="regRead"
-      alignText="right"
-      size="wide"
-    />
-    <Cardobject
-      image={{
-        src: "/content/illus/justBanner.jpg",
-        alt: "min banner",
-        position: "center",
-      }}
-      size="mediumWide"
-    />
+  <B2Gallery />
 
-    <div
-      class="cards arrowCard material-symbols-rounded"
-      style="font-size: 250px; display: grid; place-items: center;"
-    >
-      arrow_downward
-    </div>
-
-    <Cardobject
-      isLink
-      href="#"
-      image={{
-        src: "/content/linkosBanner/s.twt1.jpg",
-        alt: "min banner",
-        position: "left",
-      }}
-      content="twitter.potto22"
-    />
-    <Cardobject
-      isLink
-      href="#"
-      image={{
-        src: "/content/linkosBanner/s.twt2.jpg",
-        alt: "min banner",
-        position: "left",
-      }}
-      content="twitter.pottosmuts"
-    />
-    <Cardobject
-      isLink
-      href="#"
-      image={{
-        src: "/content/linkosBanner/s.bsky.jpg",
-        alt: "min banner",
-        position: "left",
-      }}
-      content="bsky.potto"
-    />
-  </Gridbox>
-
-  <Gridbox>
-    <CardObject
-      isTextCard
-      size="superWide"
-      title="Gallery."
-      titleSize="mediumWide"
-      content="<i>::Latest few works.</i>"
-      contentSize="small"
-      fontOverrideContent="var(--contentSecondary)"
-      isInvisible
-    />
-  </Gridbox>
-  <B2GalleryIndex />
-  <a href="./gallery" class="wideGo">
-    <div class="wideGoTitle">
-      Open full archive
-      <svg class="dynamicarrow" viewBox="0 0 10 10">
-        <g>
-          <path class="line" d="M0 5h7"></path>
-          <path class="arrow" d="M1 1l4 4-4 4"></path>
-        </g>
-      </svg>
-    </div>
-  </a>
 </div>
 
 <style lang="scss">
   @use "../../../src/styles/_mixins" as *;
-  .mainSelections {
+  .centering {
     background: var(--base);
     transition: background 0.2s var(--sleek);
     display: flex;

@@ -1,6 +1,22 @@
 ---
-
+import Gridbox from "../layouts/Gridbox.astro";
+import CardObject from "./Card-object.astro";
 ---
+
+<div class="galleryLoadingInd"></div>
+<Gridbox id="latestWorks" />
+
+<div id="loadMore" class="wideGo" style="display: none; text-align: center;">
+  <a class="wideGoTitle"
+    >Load more
+    <svg class="dynamicarrow" viewBox="0 0 10 10">
+      <g>
+        <path class="line" d="M0 5h7"></path>
+        <path class="arrow" d="M1 1l4 4-4 4"></path>
+      </g>
+    </svg>
+  </a>
+</div>
 
 <script>
   // TypeScript types and interfaces
@@ -181,9 +197,9 @@
       container.className = "image-container";
 
       const img = new Image();
-      img.setAttribute("data-aos", "zoom-in");
-      img.className = "imgs self cards b2Imgs";
-      img.setAttribute("orbReact", "true");
+      //img.setAttribute("data-aos", "zoom-in");
+      img.className = "interactive imgs cards b2Imgs";
+      //img.setAttribute("orbReact", "true");
 
       img.dataset.src = item.urlLossy;
       img.alt = item.nameLossy;
@@ -355,7 +371,11 @@
       } catch (error) {
         console.error("Initialization failed:", error);
         if (loadingIndicator) {
-          loadingIndicator.textContent = `Failed to load images. Which means it can only mean that something is broken beyond human comprehension.`;
+          loadingIndicator.innerHTML = `
+          <b>Failed to load images.</b> Which can only mean that something is broken beyond human comprehension.<br>
+          Notify Potto or something, they're not human. Probably.<br><br>
+          Tell them: <b>./gallery: ${error instanceof Error ? error.message : "Unknown error, you're cooked."}</b>
+          `;
           loadingIndicator.classList.remove("holdon");
         }
       }
@@ -365,3 +385,289 @@
     initialize();
   })();
 </script>
+
+<style lang="scss">
+  /*IMAGEZOOM-------------------------------*/
+  .b2Imgs,
+  .imgz {
+    cursor: pointer;
+  }
+
+  .zoomindimmer {
+    position: fixed;
+    top: 0;
+    background: rgba(0, 0, 0, 0.856);
+    height: 100vh;
+    width: 100%;
+    z-index: 1;
+    -webkit-backdrop-filter: grayscale(1);
+    backdrop-filter: grayscale(1);
+    display: none;
+  }
+
+  .zoomin {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: none;
+  }
+
+  .zoomincontent {
+    max-height: 95vh;
+    max-width: 100vw;
+    -webkit-animation: zoom 0.5s forwards var(--sleek);
+    animation: zoom 0.5s forwards var(--sleek);
+  }
+
+  .imgpropgroup {
+    display: flex;
+  }
+
+  .zoomalttext {
+    max-width: 60vw;
+    text-align: center;
+    background: var(--blackfL);
+    color: var(--textfL);
+    margin: 0.3em 1rem 0.5em 1rem;
+    animation: zoom 0.5s forwards var(--sleek);
+    padding: 0.2rem 1rem;
+    border-radius: 10px;
+    font-weight: 800;
+    font-family: var(--contentsecondary);
+  }
+
+  .zoomlosslesslink {
+    max-width: 60vw;
+    text-align: center;
+    border: solid 1px var(--blackfL);
+    color: var(--textD) !important;
+    margin: 0.3em 1rem 0.5em 1rem;
+    animation: zoom 0.5s forwards var(--sleek);
+    padding: 0.2rem 1rem;
+    border-radius: 10px;
+    font-weight: 200;
+    font-family: var(--contentsecondary);
+  }
+
+  .zoomaltlink {
+    color: var(--accentD) !important;
+  }
+
+  .zoomincontentAlign {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: zoom-out;
+  }
+
+  .zoomDisable {
+    display: none;
+  }
+
+  @-webkit-keyframes zoom {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes zoom {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /*IMAGEZOOM-------------------------------*/
+
+  .filterDropdown {
+    background: var(--blackfL);
+    color: var(--textfL);
+    font-family: var(--contentsecondary);
+    font-weight: 600;
+    border-radius: 5px;
+    padding: 0.3rem 3rem;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--accentD);
+      color: var(--textD);
+      font-weight: 900;
+    }
+
+    &.holdDrop {
+      background: none;
+      border: solid 1px var(--accentD);
+      box-sizing: border-box;
+      color: var(--textaccentD);
+      font-weight: 900;
+    }
+  }
+
+  .filterDrop {
+    position: absolute;
+    background: var(--alpha2baseD);
+    font-weight: 500;
+    margin-top: 3em;
+    width: 130%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    transition:
+      background 0.2s var(--sleek),
+      color 0.2s var(--sleek),
+      transform 0.2s var(--anchorhead),
+      opacity 0.2s var(--sleek);
+    transform: translateY(-120px);
+    opacity: 0;
+    pointer-events: none;
+    //display: none;
+
+    &.dropped {
+      transform: translateY(0px);
+      opacity: 1;
+      pointer-events: auto;
+      transition:
+        transform 0.2s var(--sleek),
+        opacity 0.2s var(--sleek);
+      //display: flex;
+    }
+  }
+
+  @media screen and (max-width: 420px) {
+    .filterDropdown {
+      padding: 0.3rem 1.5rem;
+    }
+
+    .filterDrop {
+      width: 110%;
+    }
+  }
+
+  .filterButtonGroup {
+    color: var(--textD);
+    margin-bottom: 1em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    transition:
+      background 0.2s var(--sleek),
+      color 0.2s var(--sleek);
+  }
+
+  .FTbutton {
+    cursor: pointer;
+    margin: 0 2%;
+    background: var(--alphabaseD);
+    width: 25%;
+    //border: solid 1px var(--textD);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.3rem;
+    border-radius: 10px;
+    transition:
+      background 0.2s var(--sleek),
+      filter 0.2s var(--sleek),
+      transform 0.2s var(--anchorhead);
+
+    &:hover {
+      filter: var(--brightnessD);
+    }
+
+    &:active {
+      transform: scale(0.8);
+    }
+
+    &.FTon {
+      .FTicon {
+        transform: scale(1.2);
+      }
+
+      background: var(--accentD);
+    }
+  }
+
+  .filterCheckbox {
+    display: none;
+  }
+
+  .FTicon {
+    font-variation-settings:
+      "FILL" 1,
+      "wght" 200,
+      "GRAD" 0,
+      "opsz" 24;
+    //gicons
+    --iconSize: 90px;
+    height: var(--iconSize);
+    width: var(--iconSize);
+    font-size: 70px;
+    display: grid;
+    place-items: center;
+    transition:
+      color 0.2s var(--sleek),
+      transform 0.2s var(--bounce);
+  }
+
+  .FTname {
+    font-family: var(--display);
+    font-weight: 100;
+    margin: 0.5rem 0;
+  }
+
+  #reloadButton {
+    cursor: pointer;
+    pointer-events: none;
+    padding: 0.5em;
+    border: solid 1px var(--blackfL);
+    font-family: var(--content);
+    color: var(--textD);
+    border-radius: 10px;
+    width: 70%;
+    text-align: center;
+    opacity: 0.5;
+    border: 3px solid var(--textD);
+    box-shadow: var(--accentD) 0 0px 0;
+    transition:
+      transform 0.2s var(--bounce),
+      box-shadow 0.2s var(--bounce);
+
+    &.reloadReady {
+      box-shadow: var(--textD) 0 5px 0;
+      transform: translateY(-5px);
+      pointer-events: auto;
+      opacity: 1;
+      background: var(--alphabaseD);
+    }
+
+    &:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--textD) 0 10px 0;
+    }
+
+    &:active {
+      transform: translateY(0px);
+      box-shadow: var(--accentD) 0 0 0;
+      transition: all 0.1s var(--accel);
+    }
+  }
+</style>

@@ -1,0 +1,152 @@
+<div id="zoom-overlay">
+  <div class="instructions">fuckof</div>
+  <img id="imgSlot" src="" />
+</div>
+
+<script>
+import { devConsole } from "./utils/devConsole";
+
+  const overlay = document.getElementById("zoom-overlay") as HTMLElement;
+  const zoomedImg = document.getElementById("imgSlot") as HTMLImageElement;
+  const instructions = document.querySelector(".instructions") as HTMLElement;
+
+  let scale = 1;
+  let originalImageRect: DOMRect | null = null;
+
+  // Open zoom overlay
+  document.querySelectorAll(".interactive").forEach((img) => {
+    const imgEL = img as HTMLImageElement;
+    imgEL.addEventListener("click", () => {
+      zoomedImg.src = imgEL.src;
+      zoomedImg.dataset.alt = imgEL.alt || "";
+      overlay.style.display = "flex";
+      scale = 1;
+
+      zoomedImg.onload = () => {
+        requestAnimationFrame(() => {
+          originalImageRect = zoomedImg.getBoundingClientRect();
+          devConsole(originalImageRect);
+          updateTransform(window.innerWidth / 2, window.innerHeight / 2);
+        });
+      };
+    });
+  });
+
+  // Zoom with wheel
+  overlay.addEventListener("wheel", (e) => {
+    e.preventDefault();
+
+    const zoomIntensity = 0.1;
+    scale += e.deltaY < 0 ? zoomIntensity : -zoomIntensity;
+    scale = Math.max(0.5, Math.min(scale, 5));
+
+    updateTransform(e.clientX, e.clientY);
+  });
+
+  // Pan with mouse movement
+  overlay.addEventListener("mousemove", (e) => {
+    updateTransform(e.clientX, e.clientY);
+  });
+
+  // Close overlay
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+      closeOverlay();
+    }
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeOverlay();
+    }
+  });
+
+  function closeOverlay() {
+    overlay.style.display = "none";
+    instructions.style.display = "none";
+  }
+
+  function updateTransform(mouseX: number, mouseY: number) {
+    if (!originalImageRect) return;
+
+    // Calculate mouse position relative to the center of the viewport
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    // Get offset from center as a ratio (-1 to 1)
+    const offsetX = (mouseX - centerX) / centerX;
+    const offsetY = (mouseY - centerY) / centerY;
+
+    let translateX = 0;
+    let translateY = 0;
+
+    // Only apply movement when zoomed in
+    if (scale > 1) {
+      // Calculate how much the image extends beyond the viewport when scaled
+      const scaledWidth = originalImageRect.width * scale;
+      const scaledHeight = originalImageRect.height * scale;
+
+      // Calculate maximum translation (how far we can move before showing empty space)
+      const maxTranslateX = Math.max(0, (scaledWidth - window.innerWidth) / 2);
+      const maxTranslateY = Math.max(
+        0,
+        (scaledHeight - window.innerHeight) / 2
+      );
+
+      // Apply movement proportional to the available space
+      // Invert the movement so moving mouse right moves image left (magnifying glass effect)
+      translateX = -offsetX * maxTranslateX;
+      translateY = -offsetY * maxTranslateY;
+    }
+
+    zoomedImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+    // Show/hide instructions based on zoom level
+    if (scale > 1) {
+      instructions.style.display = "block";
+    } else {
+      instructions.style.display = "none";
+    }
+  }
+
+  // Show instructions when overlay opens
+  overlay.addEventListener("transitionend", () => {
+    if (overlay.style.display === "flex") {
+      instructions.style.display = "block";
+    }
+  });
+</script>
+
+<style lang="scss">
+  #zoom-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    z-index: 1000;
+    cursor: move;
+  }
+
+  #zoom-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    user-select: none;
+    pointer-events: none;
+    /* Removed transition property for immediate movement */
+  }
+
+  .instructions {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 1001;
+  }
+</style>

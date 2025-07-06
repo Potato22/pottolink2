@@ -1,0 +1,71 @@
+---
+interface Props {
+  /** Card size modifier */
+  size?: "tall" | "extraTall" | "big" | "wide" | "superWide" | "mediumWide";
+
+  /** Image properties for the card */
+  image?: {
+    /** Image source URL */
+    src: string;
+    /** Alt text for the image */
+    alt: string;
+    /** Image position in the card */
+    position?: "left" | "right" | "top" | "bottom" | "center";
+  };
+
+  video?: {
+    /** Video source URL */
+    src: string;
+    /** Alt text for the video */
+    alt: string;
+    /** Video position in the card */
+    position?: "left" | "right" | "top" | "bottom" | "center";
+
+    autoplay?: boolean;
+  };
+}
+const { size, image, video }: Props = Astro.props;
+
+const cardSizes =
+  size &&
+  {
+    tall: "tallcard",
+    extraTall: "extratallcard",
+    big: "bigcard",
+    wide: "widecard",
+    superWide: "superwidecard",
+    mediumWide: "mediumwidecard",
+  }[size];
+---
+
+{
+  image && (
+    <img
+      loading="lazy"
+      data-aos="zoom-in"
+      class={`interactive relative imgs cards imgcard ${image.position} ${cardSizes || ""}`}
+      src={image.src}
+      data-desc={image.alt}
+      alt={image.alt}
+    />
+  )
+}
+{
+  video && (
+    <video
+      preload="none"
+      autoplay
+      muted
+      loop
+      class={`interactive relative imgs cards imgcard ${video.position}`}
+      src={video.src}
+      data-alt={video.alt}
+    />
+  )
+}
+
+<style lang="scss">
+  .interactive {
+    cursor: zoom-in;
+  }
+</style>

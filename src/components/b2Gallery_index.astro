@@ -3,7 +3,7 @@ import Gridbox from "../layouts/Gridbox.astro"
 ---
 
 <div class="galleryLoadingInd tcreg"></div>
-<Gridbox id="latestWorks">
+<Gridbox id="latestWorks" deflateTop />
 
 <script>
   import { devConsole } from "./utils/devConsole";
@@ -134,10 +134,10 @@ import Gridbox from "../layouts/Gridbox.astro"
         displayCount.forEach((item) => {
           const img = new Image();
           const losslessLinko = document.createElement("p");
-          img.setAttribute("data-aos", "zoom-in");
-          img.setAttribute("class", "imgs self cards imgcard b2Imgs");
-          img.setAttribute("orbReact", "true");
-          //img.setAttribute('loading', 'lazy');
+          //img.setAttribute("data-aos", "zoom-in");
+          img.setAttribute("class", "imgs relative cards imgcard b2Imgs");
+          //img.setAttribute("orbReact", "true");
+          img.setAttribute('loading', 'lazy');
           img.src = item.urlLossy;
           img.alt = item.nameLossy; // remove file ext
           img.dataset.nsfw = item.nsfw ? "true" : "false";
