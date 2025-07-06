@@ -1,0 +1,75 @@
+---
+import { ClientRouter } from "astro:transitions";
+import pottoCeramic from "../assets/Pottoceramic.png";
+import PersistentWindow from "../components/persistentWindow.astro";
+import QuirkyLoad from "../components/quirkyLoad.astro";
+---
+
+<!doctype html>
+<html lang="en" transition:name="root" transition:animate="none">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href={pottoCeramic.src} />
+
+    <!-- OG -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://commission.pottoart.uk/" />
+    <meta property="og:title" content="Potto Comm's" />
+    <meta property="og:description" content="interactive commission page" />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/Potato22/commission/master/demo.jpg"
+    />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://commission.pottoart.uk/" />
+    <meta property="twitter:title" content="Potto" />
+    <meta
+      property="twitter:description"
+      content="interactive commission page"
+    />
+    <meta
+      property="twitter:image"
+      content="https://raw.githubusercontent.com/Potato22/commission/master/demo.jpg"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back,arrow_circle_right,arrow_downward,close,dark_mode,home,light_mode"
+    />
+    <title>Potto Commissions</title>
+    <ClientRouter />
+  </head>
+  <body transition:animate="none">
+    <PersistentWindow />
+    <QuirkyLoad />
+
+    <div>
+      <slot />
+    </div>
+
+    <div class="endOfPage">
+      <hr class="end" />
+    </div>
+    <div class="footer">
+      <div class="flexbox1">
+        <div class="socials">
+          <a href="https://bsky.app/profile/potto.bsky.social" target="_blank">
+            <div class="socicon bsky"></div>
+          </a>
+          <a href="https://twitter.com/Potto2292" target="_blank">
+            <div class="socicon twt"></div>
+          </a>
+        </div><span class="copyright">©Potto</span><a
+          href="tos"
+          class="tosPageLink"><span>Terms of Service</span></a
+        ><span class="messageend"
+          >if you have any further questions please contact me on twitter, thank
+          you!</span
+        ><br />
+      </div>
+    </div>
+  </body>
+</html>

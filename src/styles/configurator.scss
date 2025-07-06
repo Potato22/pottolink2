@@ -1,0 +1,1180 @@
+@use "mixins" as *;
+
+.animExit {
+    opacity: 0;
+    transform: translateX(50%);
+    transition:
+        opacity 0.2s,
+        transform 0.2s var(--accel) !important;
+}
+
+.animEnter {
+    animation: fadeIn 0.2s forwards !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+#configWrap {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: hidden;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        height: auto;
+    }
+}
+
+#configStatus {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 0;
+    padding: 0;
+    min-height: 0;
+    overflow: hidden;
+    border-bottom: 1px solid transparent;
+    background: var(--base);
+    transition: all 0.2s var(--sleek);
+    z-index: 10;
+    /* fucking hell */
+
+    .defaultLayout {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    @include breakpoint(tablet) {
+        position: fixed;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        top: 0;
+        position: fixed;
+
+        &.active .stPricebox {
+            width: 100%;
+            height: 40px;
+            position: absolute;
+            background: rgba(var(--primSecondaryRGB), .5);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--fore);
+            left: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            transform: translateY(80px);
+            opacity: 0;
+            animation: mobilePriceBox .2s var(--sleek) .2s forwards;
+
+            .estSpan {
+                padding-bottom: .2em;
+            }
+
+            .numeros {
+                margin-left: .5em;
+            }
+        }
+    }
+
+    &.active {
+        padding: 0 1em 1em 1em;
+        max-height: 90px;
+        min-height: 90px;
+        overflow: visible;
+        border-color: var(--fore);
+    }
+}
+
+@keyframes mobilePriceBox {
+    from {
+        opacity: 0;
+        transform: translateY(200%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(63px);
+    }
+}
+
+.stCell1 {
+    display: flex;
+    flex-direction: column;
+    color: var(--fore);
+}
+
+.stTitle {
+    font-size: 3rem;
+    font-family: var(--doto);
+    font-weight: 900;
+    color: var(--accent);
+}
+
+.stDesc {
+    font-size: 1rem;
+    font-family: var(--content);
+
+    @include breakpoint(tiny, mobile) {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 300px;
+    }
+}
+
+.stCell2 {
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+    color: var(--fore);
+}
+
+.stPricebox {
+    font-family: var(--content);
+
+    & .estSpan {
+        font-size: 1rem;
+        color: var(--foreSecondary);
+    }
+
+    & .numeros {
+        font-size: 2rem;
+        font-weight: 900;
+        font-family: var(--doto);
+    }
+}
+
+.disclaimer {
+    height: 100%;
+    position: relative;
+    display: flex;
+    user-select: none;
+    text-align: center;
+    line-height: 1.4;
+    align-items: flex-end;
+    margin-right: 5em;
+    margin-left: 1em;
+    color: var(--fore);
+    font-family: var(--content);
+
+    @include breakpoint(tiny, mobile) {
+        margin: 0;
+        margin-left: 1em;
+
+        &.defaultDisclaimer {
+            display: none;
+        }
+    }
+
+    @include breakpoint(tablet, desktop) {
+        &.mobileDisclaimer {
+            display: none;
+        }
+    }
+
+    & .disclaimerIco {
+        font-size: 1.7rem;
+        transform: translateY(-0.225em);
+    }
+
+    &.important {
+        color: red;
+
+        &::before {
+            background: #ff2929;
+        }
+    }
+
+    &::before {
+        content: attr(aria-label);
+        position: absolute;
+        background: var(--base);
+        transition: all 0.1s 0.3s;
+        color: var(--fore);
+        font-size: 1rem;
+        padding: 0.3em 0.6em;
+        border-radius: 12px;
+        pointer-events: none;
+        user-select: none;
+        opacity: 0;
+        min-width: 200px;
+        z-index: 99;
+        box-shadow: rgba(36, 36, 40, 0.377) 0 10px 20px;
+        transform: translate(-80%, 40px);
+        border: 2px solid var(--fore);
+
+    }
+
+    &:hover::before {
+        transform: translate(-80%, 90px);
+        opacity: 1;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        &::before {
+            font-size: 1.3rem;
+        }
+
+        &:hover::before {
+            transform: translate(-80%, 160px);
+        }
+    }
+}
+
+#cancel {
+    font-size: 3rem;
+    vertical-align: middle;
+    transform: translateY(-.1em);
+    cursor: pointer;
+    color: var(--fore);
+    margin-left: 3em;
+    transition:
+        color 0.2s var(--sleek),
+        transform 0.2s var(--sleek);
+
+    &:hover {
+        color: var(--prim);
+        transform: scale(1.1) translateY(-.1em);
+    }
+
+    @include breakpoint(tiny, mobile, tablet) {
+        margin-left: 0;
+        font-size: 4rem;
+    }
+}
+
+.cardBody {
+    --cardRounding: 50px;
+    --animDur: 0.3s;
+    position: relative;
+    flex: 1;
+    display: flex;
+    background-color: var(--base);
+    padding: 1rem;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    transition: width var(--animDur) var(--sleek);
+    border-radius: 0px;
+    transition:
+        background 0.2s var(--sleek),
+        border 0.2s var(--sleek),
+        padding 0.2s var(--sleek);
+
+    &.configuring {
+        padding: 0rem;
+    }
+
+    @include breakpoint(tiny, mobile, tablet) {
+        width: 100%;
+        padding: 0.5rem;
+        //text-align: center;
+        //align-items: center;
+        justify-content: center;
+    }
+}
+
+.imgGrid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5em;
+    min-width: 50%;
+    width: 50%;
+    padding: 0em;
+    transition: padding 0.2s var(--sleek);
+
+    &.configuring {
+        padding: 1em;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        width: 100%;
+        height: 50vh;
+        --imgSize: 100%;
+    }
+
+    @include breakpoint(tablet) {
+        width: 100%;
+        height: 50vh;
+    }
+}
+
+.imgGridMobile {
+    --slideShowSpeed: 12s;
+    position: relative;
+    z-index: 1;
+    height: 50vh;
+    overflow: hidden;
+    width: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s var(--sleek);
+
+    &.configuring {
+        height: 0vh;
+        transition-timing-function: var(--accel);
+    }
+
+    >div {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        position: absolute;
+        animation: heroimage var(--slideShowSpeed) var(--sleek) infinite;
+        opacity: 0;
+        transform: scale(1.2);
+    }
+}
+
+@include breakpoint(tiny, mobile, tablet) {
+    .imgGrid {
+        display: none;
+    }
+
+    .imgGridMobile {
+        display: grid;
+    }
+}
+
+.imgGridMobile>div {
+    &:nth-child(2) {
+        animation-delay: calc(var(--slideShowSpeed) / 4);
+    }
+
+    &:nth-child(3) {
+        animation-delay: calc(var(--slideShowSpeed) / 2);
+    }
+
+    &:nth-child(4) {
+        animation-delay: calc(var(--slideShowSpeed) / 1.333);
+    }
+}
+
+@keyframes heroimage {
+    10% {
+        opacity: 1;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    40% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+.imgContainer {
+    --imgSize: 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--animDur) var(--sleek);
+    border-radius: var(--imgGridRounding);
+
+    --imgGridRounding: calc(var(--cardRounding) - 1em);
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform var(--animDur) ease-in-out;
+}
+
+#infobox {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    color: var(--fore);
+    padding: 0 1em;
+    position: relative;
+    transition: color 0.2s var(--sleek);
+    height: 100%;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.backB,
+.backBMobile {
+    color: var(--fore);
+    border: 1px solid var(--fore);
+    align-self: flex-start;
+    font-size: 6rem;
+    border-radius: calc(var(--cardRounding) / 1.5);
+    transition: all 0.2s var(--sleek);
+
+    &:hover {
+        background: var(--prim);
+        border-color: var(--prim);
+        color: var(--base);
+        cursor: pointer;
+        border-radius: 10%;
+    }
+
+}
+
+.backBMobile {
+    width: 20%;
+    display: none;
+    position: fixed;
+    background: rgba(var(--baseRGB), .8);
+    border: none;
+    z-index: 3;
+    font-size: 4rem;
+    height: 80px;
+    backdrop-filter: blur(5px);
+    border-radius: 0 0 50px 0;
+    transform: translateX(-10px);
+    transition: transform .2s var(--bounce), border-radius .2s var(--bounce), background .2s var(--sleek), color .2s var(--sleek), opacity .2s var(--sleek);
+
+
+    &:hover {
+        background: rgba(var(--primRGB), .8);
+        border-radius: 0 0 20px 0;
+        transform: translateX(-4px);
+    }
+
+    &.configuring {
+        transform: translateX(-20%);
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+@include breakpoint(tiny, mobile, tablet) {
+    .backB {
+        display: none;
+    }
+
+    .backBMobile {
+        display: grid;
+        place-items: center;
+    }
+}
+
+
+.infocell1 {
+    height: 100%;
+    width: 550px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 60%;
+    text-align: right;
+
+    @include breakpoint(tiny, mobile) {
+        margin-top: 1em;
+        width: 100%;
+        align-items: center;
+        font-size: .8rem;
+
+        .typeTitle {
+            font-size: 4rem;
+            margin-bottom: 0em;
+
+        }
+
+        .description {
+            font-size: 1.4rem;
+        }
+    }
+
+    @include breakpoint(tablet) {
+        height: auto;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+.typeTitle {
+    font-size: 6rem;
+    font-family: var(--doto);
+    font-weight: 900;
+    margin-bottom: 0.2em;
+
+    @include breakpoint(tablet) {
+        text-align: center;
+    }
+}
+
+.description {
+    font-size: 1.5rem;
+    font-family: var(--content);
+    font-weight: 300;
+
+    @include breakpoint(tiny, mobile) {
+        margin-top: 0.5em;
+        text-align: center;
+    }
+}
+
+.tags {
+    display: flex;
+    margin-top: 1em;
+    gap: 0.5em;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        justify-content: center;
+        margin-bottom: 2em;
+    }
+}
+
+.tag {
+    font-family: var(--doto);
+    font-weight: 900;
+    background: var(--primSecondary);
+    color: var(--fore);
+    padding: 0.2em 0.8em;
+    border-radius: 20px;
+    box-sizing: border-box;
+    transition:
+        background 0.2s var(--sleek),
+        color 0.2s var(--sleek);
+
+    &.tag-best {
+        background: gold;
+        color: black;
+    }
+
+    &.tag-btype {
+        border: 1px solid var(--primSecondary);
+        background: transparent;
+        color: var(--accent);
+    }
+}
+
+.infocell2 {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    height: 100%;
+    margin-right: 1em;
+    right: 0;
+}
+
+.priceBox {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    font-size: 3rem;
+    transition: all var(--animDur) var(--sleek);
+    margin-top: 1em;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.startsFrom {
+    font-family: var(--content);
+    font-weight: 400;
+    font-size: 0.5em; //I know what im doing
+    color: var(--foreSecondary);
+    transform: translateY(-0.7em);
+    transition: color 0.2s var(--sleek);
+
+    @include breakpoint(tiny, mobile, tablet) {
+        transform: none;
+    }
+}
+
+.price {
+    font-family: var(--content);
+    font-weight: 900;
+    font-size: 2em; //I know what im doing
+    color: var(--fore);
+    transition: color 0.2s var(--sleek);
+}
+
+#startConfig {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--content);
+    font-size: 1.3rem;
+    background: var(--prim);
+    color: var(--fore);
+    border: 1px solid var(--base);
+    padding: 0.4em 5em;
+    border-radius: 25px;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    pointer-events: all;
+    opacity: 1;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all var(--animDur) var(--sleek);
+
+    @include breakpoint(tablet) {
+        padding: 1em 5em;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        padding: 1em 0;
+        width: 100%;
+    }
+
+    & .configIco {
+        right: 0.1em;
+        position: absolute;
+        font-size: 1.6em;
+        transform: translateX(-2em);
+        opacity: 0;
+        transition: none;
+    }
+
+    &:hover {
+        background: transparent;
+        color: var(--fore);
+        border: 1px solid var(--prim);
+        transform: scale(1.05);
+
+        & .configIco {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all var(--animDur) var(--sleek);
+        }
+    }
+
+    &.disabled {
+        background: rgba(0, 0, 0, 0);
+        box-sizing: content-box;
+        border: 2px solid var(--viscueDisabled);
+        color: var(--viscueDisabled);
+        pointer-events: none;
+        font-size: 1.2rem;
+    }
+
+    &.configGo {
+        transition: all var(--animDur) var(--sleek);
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+#configWindow {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    display: none;
+    margin-left: 1em;
+    padding: 2em 12em;
+    flex-direction: column;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        overflow-y: auto;
+        justify-content: center;
+    }
+
+    @include breakpoint(tablet) {
+        padding: 8em 2em 4em 2em;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        padding: 10em 2em 4em 2em;
+    }
+
+    @include breakpoint(tiny) {
+        padding: 1em 0em;
+    }
+}
+
+.mobileSubmitDisclaimer {
+    text-align: center;
+    font-size: 1rem;
+    font-family: var(--content);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 20px;
+    padding: 1em;
+    animation: breathe 4s infinite;
+    margin-bottom: 1em;
+
+    @include breakpoint(desktop) {
+        display: none;
+    }
+}
+
+@keyframes breathe {
+    0% {
+        opacity: 1;
+    }
+
+    49% {
+        opacity: .7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: .7;
+    }
+}
+
+.submitButtons {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--content);
+    font-size: 1.3rem;
+    background: var(--prim);
+    color: var(--fore);
+    border: 2px solid var(--base);
+    padding: 0.4em 5em;
+    border-radius: 25px;
+    opacity: 1;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s var(--sleek);
+
+    &.disabled {
+        filter: grayscale(1);
+        pointer-events: none;
+    }
+
+    @include breakpoint(tiny, mobile, tablet) {
+        padding: 1em 5em;
+
+        &.navBarSubmit {
+            display: none;
+        }
+    }
+
+    &::before {
+        content: "Prices calculated here are an estimate, overall request complexity may affect the final price!";
+        position: absolute;
+        background: var(--base);
+        color: var(--fore);
+        font-size: 1rem;
+        padding: 0.3em 0.6em;
+        border-radius: 12px;
+        pointer-events: none;
+        user-select: none;
+        opacity: 0;
+        min-width: 200px;
+        max-width: 80%;
+        z-index: 1;
+        box-shadow: rgba(36, 36, 40, 0.377) 0 10px 20px;
+        transform: translate(00%, 40px);
+        transition: all 0.2s var(--accel);
+        border: 2px solid var(--fore);
+    }
+
+    &.sbBottom::before {
+        transform: translate(00%, -40px);
+    }
+
+    & .configIco {
+        position: absolute;
+        font-size: 1.6em;
+        opacity: 0;
+    }
+
+    &:hover {
+        background: transparent;
+        border: 2px solid var(--prim);
+
+        & .submitString {
+            opacity: 0;
+        }
+
+        & .configIco {
+            opacity: 1;
+            /* transform: translateX(0); */
+            transition: all 0.2s var(--sleek);
+        }
+
+        &::before {
+            transform: translate(00%, 80px);
+            opacity: 1;
+            transition-timing-function: var(--sleek);
+            animation: primSpike 1s;
+        }
+
+        &.sbBottom:hover {
+            &::before {
+                transform: translate(00%, -80px);
+                opacity: 1;
+            }
+        }
+    }
+}
+
+@keyframes primSpike {
+    from {
+        background: var(--primSecondary);
+        border-color: var(--accent);
+    }
+
+    to {
+        background: var(--base);
+        border-color: var(--fore);
+    }
+}
+
+#configSummary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 20;
+    backdrop-filter: grayscale(1) blur(12px);
+    background: rgba(var(--baseRGB), 0.9);
+    opacity: 0;
+    transform: translateY(-1vh) scale(0.9);
+    transition: all 0.2s;
+    transition-timing-function: var(--accel);
+    pointer-events: none;
+    padding: 0 5em;
+    border-radius: 50px;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        overflow-y: auto;
+    }
+
+    //opacity: 1;
+    //transform: none;
+    //pointer-events: all;
+
+    .formComponent {
+        background: var(--base);
+        width: 300px;
+        max-width: 300px;
+        height: 165px;
+        margin: 0;
+        cursor: auto;
+
+        @include breakpoint(tiny, mobile, tablet) {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        //margin-bottom: 1em;
+
+        & .optionTitle {
+            font-size: 1rem;
+            font-weight: 400;
+
+            &.longTextTitle {
+                font-weight: 900;
+
+            }
+        }
+
+        & .optionDesc {
+            position: relative;
+            font-size: 2rem;
+            font-weight: 900;
+            overflow: hidden;
+
+            &.longText {
+                font-size: 1rem;
+                font-weight: 500;
+                padding-top: .3em;
+
+                @include breakpoint(tiny, mobile) {
+                    font-size: 1.2rem;
+                }
+
+                &::before {
+                    position: absolute;
+                    content: "";
+                    background: linear-gradient(150deg, transparent, var(--base) 90%);
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+
+        & .ocHeader {
+            min-height: 40px;
+        }
+    }
+
+    &.active {
+        pointer-events: auto;
+        transition-timing-function: var(--sleek);
+        opacity: 1;
+        transform: translateY(0vh) scale(1);
+        border-radius: 0px;
+    }
+}
+
+@keyframes revealSummary {
+    from {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0vh);
+        opacity: 1;
+    }
+}
+
+#confirmText {
+    color: var(--fore);
+    font-size: 3rem;
+    font-family: var(--display);
+    font-weight: 700;
+    margin-bottom: 1em;
+    transition: opacity 0.2s var(--sleek);
+    text-align: center;
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 2rem;
+        margin-top: 1em;
+    }
+
+    @include breakpoint(tablet) {
+        font-size: 2.4rem;
+        margin-top: 1em;
+    }
+}
+
+#pickedConfigGrid {
+    display: flex;
+    //display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1em;
+    transition: opacity 0.2s var(--sleek);
+    max-height: 100vh;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        overflow-y: scroll;
+    }
+}
+
+#scrollInd {
+    margin-top: .3em;
+    font-family: var(--doto);
+    font-weight: 900;
+    color: var(--fore);
+
+    .scrollArrow {
+        position: absolute;
+        animation: flashVertDown .5s infinite;
+    }
+
+    @include breakpoint(desktop) {
+        display: none;
+    }
+}
+
+#confirmButtons {
+    position: relative;
+    margin-top: 3em;
+    display: flex;
+    gap: 2em;
+    transition: all 0.2s var(--sleek);
+    text-align: center;
+
+    @include breakpoint(tablet) {
+        margin: 2em 0;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        flex-direction: column-reverse;
+        width: 100%;
+        gap: 1em;
+        margin-bottom: 20%;
+
+    }
+
+    #summary-noTos {
+        display: none;
+    }
+
+    &>div {
+        position: relative;
+        border: 4px solid transparent;
+        /* Inner transparent border */
+        border-radius: 20px;
+        /* Optional: for rounded corners */
+        z-index: 1;
+        font-size: 1.5rem;
+        font-family: var(--content);
+        font-weight: 700;
+        color: var(--base);
+        padding: 1em 1.5em;
+        border-radius: 99px;
+        background: var(--fore);
+        user-select: none;
+        cursor: pointer;
+        box-shadow: 0 0 0 2px transparent inset;
+        min-width: 170px;
+
+        @include breakpoint(tiny, mobile) {
+            padding: .5em 1.5em;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: 4px solid var(--base);
+            border-radius: 99px;
+            pointer-events: none;
+            z-index: 2;
+            transition: all 0.2s var(--sleek);
+            transform: scale(1.1);
+            opacity: 0;
+        }
+
+        &:hover {
+            &::before {
+                transition-timing-function: var(--sleek);
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        &:active {
+            &::before {
+                transition-timing-function: var(--sleek);
+                transform: scale(0.9);
+                opacity: 1;
+            }
+        }
+    }
+}
+
+#loadAnim {
+    position: absolute;
+    z-index: 2;
+    align-items: center;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+
+    .gradOverflow {
+        width: 100px;
+        height: 10px;
+        overflow: hidden;
+        border-radius: 20px;
+        filter: blur(2px);
+        box-shadow: 0 0 12px transparent;
+    }
+
+    #gradbar {
+        width: 200%;
+        height: 10px;
+        background: linear-gradient(90deg, transparent 50%, var(--accent));
+        background-repeat: no-repeat;
+        background-position: -100px 0;
+        animation: ps5loadGrad 0.8s infinite;
+
+
+        &.loadOK {
+            animation: loadOK .8s forwards !important;
+        }
+
+        &.loadErr {
+            animation: loadErr .8s forwards !important;
+        }
+
+        &.loadDemo {
+            animation: loadDemo 1s infinite !important;
+        }
+    }
+
+    #loadStatString {
+        position: absolute;
+        width: 300px;
+        top: 15px;
+        font-family: var(--doto);
+        font-weight: 900;
+        text-align: center;
+        color: var(--fore);
+    }
+}
+
+@keyframes loadOK {
+    0% {
+        background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+        background-position: -200px 0;
+    }
+
+    100% {
+        background: linear-gradient(90deg, #47ff47 50%, transparent 50%);
+        background-position: 0px;
+    }
+}
+
+@keyframes loadErr {
+    0% {
+        background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+        background-position: -200px 0;
+    }
+
+    100% {
+        background: linear-gradient(90deg, rgb(var(--err)) 50%, transparent 50%);
+        background-position: 0px;
+    }
+}
+
+@keyframes loadDemo {
+
+    0%,
+    20%,
+    100% {
+        background: var(--accent);
+        opacity: .3;
+    }
+
+    10%,
+    30% {
+        background: var(--accent);
+        opacity: 1;
+    }
+}
+
+@keyframes ps5loadGrad {
+    0% {
+        background-position: -200px 0;
+    }
+
+    100% {
+        background-position: 0px;
+    }
+}
+
+/* eldropzone is in /styles */

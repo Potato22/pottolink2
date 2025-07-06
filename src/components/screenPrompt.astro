@@ -1,0 +1,160 @@
+<div id="bigScreen">
+  <span id="screenHeading">?</span>
+
+  <div id="screenButtons">
+    <div class="sBtn" id="screen-button0"></div>
+    <div class="sBtn" id="screen-button1"></div>
+    <div class="sBtn" id="screen-button2"></div>
+    <!-- <div id="screen-button3"></div> -->
+  </div>
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  #bigScreen {
+    //display: flex;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 20;
+    backdrop-filter: grayscale(1) blur(12px);
+    background: rgba(var(--baseRGB), 0.9);
+    opacity: 0;
+    transform: translateY(-1vh) scale(0.9);
+    transition: all 0.2s;
+    transition-timing-function: var(--accel);
+    pointer-events: none;
+    padding: 0 5em;
+    border-radius: 50px;
+
+    //opacity: 1;
+    //transform: none;
+    //pointer-events: all;
+
+    &.active {
+      pointer-events: auto;
+      transition-timing-function: var(--sleek);
+      opacity: 1;
+      transform: translateY(0vh) scale(1);
+      border-radius: 0px;
+    }
+  }
+
+  #screenHeading {
+    color: var(--fore);
+    font-size: 3rem;
+    font-family: var(--display);
+    font-weight: 700;
+    margin-bottom: 1em;
+    transition: opacity 0.2s var(--sleek);
+    text-align: center;
+    opacity: 0;
+
+    @include breakpoint(tiny, mobile) {
+      font-size: 2rem;
+      margin-top: 1em;
+    }
+
+    @include breakpoint(tablet) {
+      font-size: 2.4rem;
+      margin-top: 1em;
+    }
+  }
+
+  #screenButtons {
+    position: relative;
+    margin-top: 3em;
+    display: flex;
+    gap: 2em;
+    transition: all 0.2s var(--sleek);
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+
+    @include breakpoint(tablet) {
+      margin: 2em 0;
+    }
+
+    @include breakpoint(tiny, mobile) {
+      flex-direction: column-reverse;
+      width: 100%;
+      gap: 1em;
+    }
+
+    #summary-noTos {
+      display: none;
+    }
+
+    & .sBtn {
+      position: relative;
+      border: 4px solid transparent;
+      z-index: 1;
+      font-size: 1.5rem;
+      font-family: var(--content);
+      font-weight: 700;
+      padding: 1em 1.5em;
+      border-radius: 99px;
+      user-select: none;
+      cursor: pointer;
+      box-shadow: 0 0 0 2px transparent inset;
+      min-width: 170px;
+      background: var(--base);
+      color: var(--fore);
+      border: 4px solid var(--fore);
+      transition: all 0.2s var(--sleek);
+
+      &[data-highlight="true"] {
+        background: var(--fore);
+        color: var(--base);
+        &::before {
+          border-color: var(--base);
+        }
+      }
+
+      @include breakpoint(tiny, mobile) {
+        padding: 0.5em 1.5em;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 99px;
+        pointer-events: none;
+        z-index: 2;
+        transition: all 0.2s var(--sleek);
+        transform: scale(1.1, 1.3);
+        opacity: 0;
+        border: 4px solid var(--fore);
+      }
+
+      &:hover {
+        &::before {
+          transition-timing-function: var(--sleek);
+          transform: scale(1);
+          opacity: 1;
+        }
+        background: var(--fore);
+        color: var(--base);
+      }
+
+      &:active {
+        &::before {
+          transition-timing-function: var(--sleek);
+          transform: scale(0.9);
+          opacity: 1;
+        }
+      }
+    }
+  }
+</style>
+
+<script>
+  import "./screenPrompt";
+</script>

@@ -1,0 +1,206 @@
+---
+import Gridbox from "../layouts/Gridbox.astro"
+---
+
+<div class="galleryLoadingInd tcreg"></div>
+<Gridbox id="latestWorks">
+
+<script>
+  import { devConsole } from "./utils/devConsole";
+  devConsole(
+    "%c" + "[DEV: B2G: index gallery init]",
+    "color: orange; font-weight: bold;"
+  );
+
+  let filterNSFW = true;
+  let filterVersion = false;
+  let filterSketch = true;
+
+  // Helper to select the loading indicator
+  function getGalleryLoadingInd(): HTMLElement | null {
+    return document.querySelector(".galleryLoadingInd");
+  }
+
+  async function fetchDisplay(): Promise<any[] | null> {
+    console.log("async fetchDisplay");
+    const loadingInd = getGalleryLoadingInd();
+    if (loadingInd) {
+      loadingInd.innerHTML = "Hold on...";
+      loadingInd.classList.add("holdon");
+    }
+    try {
+      const response = await fetch(
+        "https://pottob2-dispgallery.pottoart.workers.dev/api/v1/list_all_files?maxFileCount=8"
+      );
+      if (!response.ok) {
+        if (loadingInd) {
+          loadingInd.innerHTML = "Bucket responded with " + response.status;
+          loadingInd.classList.remove("holdon");
+        }
+        throw new Error(
+          "Something went wrong while trying to fetch files: " + response.status
+        );
+      }
+      const data = await response.json();
+      return data;
+    } catch (error: any) {
+      if (loadingInd) {
+        loadingInd.innerHTML =
+          "Something went horribly wrong: list_all_files: " + error.message;
+        loadingInd.classList.remove("holdon");
+      }
+      console.error("*blows up json with mind*", error.message);
+      return null;
+    }
+  }
+
+  fetchDisplay()
+    .then((data: any[] | null) => {
+      if (data) {
+        console.log("Fetched files:", data);
+        console.log("filtering");
+        // Data processing
+        type DisplayImage = {
+          nameLossy: string;
+          urlLossy: string;
+          date: string;
+          sketch: boolean | null;
+          nsfw: boolean | null;
+          versioning: boolean | null;
+        };
+        type LosslessImage = {
+          nameLossless: string;
+          urlLossless: string;
+          date: string;
+        };
+
+        const displayImages: DisplayImage[] = [];
+        const losslessImages: LosslessImage[] = [];
+
+        data.forEach((item: any) => {
+          if (item.contentType.includes("image/")) {
+            if (item.name.includes("display/")) {
+              const nameVariable = "nameLossy";
+              const urlDisplay = "urlLossy";
+              const dateUploaded = "date";
+              const isSketch = item.url.includes("sketch");
+              const isNSFW = item.url.includes("nsfw");
+              const hasVersioning = hasExtraFlags(item.name);
+
+              // Apply filters
+              if (
+                (!filterNSFW || !isNSFW) &&
+                (!filterVersion || !hasVersioning) &&
+                (!filterSketch || !isSketch)
+              ) {
+                displayImages.push({
+                  [nameVariable]: item.name
+                    .replace(/(?:display|lossless)\//, "")
+                    .replace("nsfw/", "")
+                    .replace("sketch/", "")
+                    .split(".")[0],
+                  [urlDisplay]: item.url,
+                  [dateUploaded]: item.uploadTime,
+                  sketch: isSketch ? true : null,
+                  nsfw: isNSFW ? true : null,
+                  versioning: hasVersioning ? true : null,
+                });
+              }
+            } else if (item.name.includes("lossless/")) {
+              const nameVariable = "nameLossless";
+              losslessImages.push({
+                [nameVariable]: item.name
+                  .replace(/(?:display|lossless)\//, "")
+                  .replace("nsfw/", "")
+                  .split(".")[0],
+                urlLossless: item.url,
+                date: item.uploadTime,
+              });
+            }
+          }
+        });
+
+        displayImages.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        const displayCount = displayImages.slice(0, 8);
+
+        console.log("Display Data:", displayCount);
+        console.log("Lossless Data:", losslessImages);
+
+        const latestWorkGrid = document.getElementById("latestWorks");
+        const imgDataFragment = document.createDocumentFragment();
+
+        displayCount.forEach((item) => {
+          const img = new Image();
+          const losslessLinko = document.createElement("p");
+          img.setAttribute("data-aos", "zoom-in");
+          img.setAttribute("class", "imgs self cards imgcard b2Imgs");
+          img.setAttribute("orbReact", "true");
+          //img.setAttribute('loading', 'lazy');
+          img.src = item.urlLossy;
+          img.alt = item.nameLossy; // remove file ext
+          img.dataset.nsfw = item.nsfw ? "true" : "false";
+          img.dataset.sketch = item.sketch ? "true" : "false";
+          img.dataset.versioning = item.versioning ? "true" : "false";
+
+          const matchingLossless = losslessImages.find(
+            (x) => x.nameLossless === item.nameLossy
+          );
+          if (matchingLossless) {
+            losslessLinko.textContent =
+              "lossless: " + matchingLossless.urlLossless;
+            img.dataset.lossless = matchingLossless.urlLossless;
+          } else if (item.sketch) {
+            losslessLinko.textContent = "Sketch: " + item.urlLossy;
+          } else {
+            losslessLinko.textContent = "No lossless version available";
+            img.dataset.lossless = "false";
+          }
+
+          imgDataFragment.append(img);
+        });
+
+        if (latestWorkGrid) {
+          latestWorkGrid.replaceChildren(imgDataFragment);
+        }
+        const loadingInd = getGalleryLoadingInd();
+        if (loadingInd) {
+          loadingInd.classList.add("fade-out");
+          // Optionally, remove from DOM after fade
+          setTimeout(() => loadingInd.remove(), 500);
+        }
+      }
+    })
+    .catch((error: any) => {
+      console.error("Error during fetch:", error);
+      const loadingInd = getGalleryLoadingInd();
+      if (loadingInd) {
+        loadingInd.innerHTML =
+          "Fetching was successful but something still went wrong, not good news tell you that now. " +
+          error;
+        loadingInd.classList.remove("holdon");
+      }
+    });
+
+  // GET FLAGS
+  function getFlags(input: string): string[] {
+    const ret: string[] = [];
+    const entries = input.split(".").join(" ").split(" ");
+    entries.forEach((entry: string) => {
+      if (entry.startsWith("-")) {
+        ret.push(entry.substr(1));
+      }
+    });
+    return ret;
+  }
+
+  // DETECT "FLAGS"
+  function hasExtraFlags(imgsFilename: string): boolean {
+    const flags = getFlags(imgsFilename);
+    if (flags.length === 0) return false;
+    if (flags.length === 1 && flags.includes("sfw")) return false;
+    if (flags.includes("0") || flags.includes("default")) return false;
+    return true;
+  }
+</script>

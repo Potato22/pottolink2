@@ -1,5 +1,5 @@
 {
-  "name": "pottolink2",
+  "name": "commsheetastr",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -9,16 +9,13 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.8",
-    "astro": "^5.3.0",
-    "sass": "^1.85.0"
+    "@astrojs/mdx": "^4.3.0",
+    "astro": "^5.11.0",
+    "preact": "^10.26.6"
   },
-  "description": "```sh npm create astro@latest -- --template basics ```",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "tailwindcss": "^4.0.8"
+    "@types/dropzone": "^5.7.9",
+    "dropzone": "^6.0.0-beta.2",
+    "sass-embedded": "^1.86.3"
   }
 }

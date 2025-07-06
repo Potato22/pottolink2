@@ -1,0 +1,16 @@
+---
+
+---
+
+<div class="ghost"></div>
+
+<style lang="scss">
+  @use "../../../src/styles/_mixins" as *;
+  .ghost {
+    height: 100vh;
+    @include breakpoint(tiny, mobile) {
+      height: 10vh;
+      //display: none;
+    }
+  }
+</style>

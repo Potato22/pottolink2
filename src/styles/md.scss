@@ -1,0 +1,154 @@
+// Headings
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  &:target {
+    transition: background-color 0.3s ease;
+    color: var(--fore);
+    border-radius: 20px;
+    padding-left: 1em;
+    border: 2px solid var(--accent);
+    animation: pulse 5s infinite;
+
+    &::before {
+      content: '►';
+      position: absolute;
+      transform: translateX(-3em);
+      color: var(--accent);
+      animation: highlight 1s infinite;
+    }
+  }
+}
+
+h1,
+h2 {
+  font-family: var(--display);
+}
+
+h1 {
+  font-weight: 900;
+  margin-top: 2em;
+}
+
+h2 {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+h2,
+h3 {
+  margin-top: 3em;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 0;
+}
+
+h3,
+h5 {
+  font-family: var(--content);
+  color: var(--accent);
+}
+
+h5 {
+  font-weight: 400;
+}
+
+h6 {
+  margin: 0;
+}
+
+// Paragraphs
+p {
+  margin-top: 0;
+}
+
+// Lists
+li {
+  margin-bottom: 1em;
+}
+
+// Images
+img {
+  max-width: 100%;
+  border-radius: 20px;
+  border: 2px solid var(--fore);
+
+  &[alt="headLogo"] {
+    border: none;
+    border-radius: 0;
+  }
+
+  &[alt$="-compro"] {
+    max-width: 40px;
+    max-height: 40px;
+    border-radius: 10px;
+    border: none;
+  }
+}
+
+// Code
+code {
+  font-family: var(--contentSecondary);
+  background: var(--baseSecondary);
+  padding: 0 0.1em;
+  border: 2px solid var(--foreSecondary);
+  border-radius: 10px;
+}
+
+pre {
+  border-radius: 20px;
+  padding: 1em;
+  background: var(--baseSecondary) !important;
+  font-size: 1rem;
+  transition: all 0.2s var(--sleek);
+
+  code {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+  }
+}
+
+// Blockquotes
+blockquote {
+  background: rgb(var(--primSecondaryRGB), 0.5);
+  border-left: 4px solid var(--prim);
+  padding: 0.5em 1em 0.5em 1em;
+  border-radius: 0 20px 20px 0;
+  margin-left: 0.5em;
+
+  p {
+    margin: 0;
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0% {
+    border-color: var(--accent);
+  }
+  50% {
+    border-color: var(--primSecondary);
+  }
+}
+
+@keyframes highlight {
+  0%,
+  49.9% {
+    transform: translateX(-2.5em);
+  }
+  50%,
+  100% {
+    transform: translateX(-3em);
+  }
+}

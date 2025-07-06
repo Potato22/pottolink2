@@ -1,0 +1,330 @@
+---
+interface Props {
+  ignoreScrollCheck?: boolean;
+}
+const { ignoreScrollCheck } = Astro.props;
+const noHide = ignoreScrollCheck ? "true" : "false";
+---
+
+<!-- <div id="persistentWindow" data-ignore-scroll-check={noHide} transition:persist> -->
+<div id="persistentWindow" data-ignore-scroll-check={noHide}>
+  <!-- <a class="tos" href="/tos">
+    <div class="tosButton">TOS</div>
+  </a> -->
+  <div class="horizontalAlign">
+    <div id="themeSwitch" class="" title="Change to Light Mode">
+      <label class="checkboxtrig">
+        <input type="checkbox" id="ttoggle" />
+        <div class="material-symbols-rounded" id="theme-icon">light_mode</div>
+      </label>
+    </div>
+    <!-- <a href="/tos" class="persistentButtons">
+      <div>
+        <div class="buttonTitle">Open TOS</div>
+      </div>
+    </a> -->
+  </div>
+</div>
+
+<script>
+  function initPersistentWindow() {
+    const windowWidth = window.innerWidth as number;
+    const toggleSwitch = document.getElementById("ttoggle") as HTMLElement;
+    const currentTheme: string | null = localStorage.getItem("theme");
+    const tticcon = document.getElementById("theme-icon") as HTMLElement;
+    const themeSwitch = document.getElementById("themeSwitch") as HTMLElement;
+    const persistentWindowWrap = document.getElementById(
+      "persistentWindow"
+    ) as HTMLElement
+
+    //appearance
+    if (
+      persistentWindowWrap.dataset.ignoreScrollCheck == "true" ||
+      windowWidth < 767
+      //_mixins mobile preset
+    ) {
+      setTimeout(() => {
+        persistentWindowWrap.classList.add("active");
+        persistentWindowWrap.style.pointerEvents = "auto";
+      }, 500);
+    } else {
+      persistentWindowWrap.classList.remove("active");
+      persistentWindowWrap.style.pointerEvents = "none";
+      window.addEventListener("scroll", () => {
+        if (persistentWindowWrap) {
+          const halfViewportHeight = window.innerHeight / 2;
+          if (window.scrollY > halfViewportHeight) {
+            persistentWindowWrap.classList.add("active");
+            persistentWindowWrap.style.pointerEvents = "auto";
+          } else {
+            persistentWindowWrap.classList.remove("active");
+            persistentWindowWrap.style.pointerEvents = "none";
+          }
+        }
+      });
+    }
+
+    if (currentTheme) {
+      document.documentElement.setAttribute("data-theme", currentTheme);
+      //console.log('fromMem "' + currentTheme + '"');
+
+      if (currentTheme === "light") {
+        if (toggleSwitch instanceof HTMLInputElement) {
+          toggleSwitch.checked = true;
+          tticcon.innerHTML = "dark_mode";
+        }
+        //console.log('applied "' + currentTheme + '"');
+      } else {
+        //console.log('applied "' + currentTheme + '"');
+        tticcon.innerHTML = "light_mode";
+      }
+    }
+
+    function debounce(func: Function, delay: number) {
+      let timeout: number | undefined;
+      return function (this: any, ...args: any[]) {
+        clearTimeout(timeout);
+        timeout = window.setTimeout(() => func.apply(this, args), delay);
+      };
+    }
+
+    function switchTheme(e: Event) {
+      if (e instanceof Event) {
+        const target = e.target as HTMLInputElement;
+        if (target?.checked) {
+          document.documentElement.setAttribute("data-theme", "light");
+          localStorage.setItem("theme", "light");
+          //console.log('addMem "light"');
+          tticcon.innerHTML = "dark_mode";
+          themeSwitch?.classList.add("onLight");
+          themeSwitch?.classList.add("poked");
+          resetAnimation();
+        } else {
+          document.documentElement.setAttribute("data-theme", "dark");
+          localStorage.setItem("theme", "dark");
+          //console.log('addMem "dark"');
+          tticcon.innerHTML = "light_mode";
+          themeSwitch?.classList.remove("onLight");
+          themeSwitch?.classList.add("poked");
+          resetAnimation();
+        }
+      } else return;
+    }
+
+    // Debounced function to reset the animation
+    const resetAnimation = debounce(() => {
+      themeSwitch?.classList.remove("poked");
+    }, 1000); // Adjust the delay to match your animation duration
+
+    toggleSwitch?.addEventListener("change", switchTheme, false);
+  }
+
+  initPersistentWindow();
+
+  document.addEventListener("astro:after-swap", () => {
+    initPersistentWindow();
+  });
+</script>
+
+<style lang="scss">
+  @use "../../src/styles/_mixins" as *;
+
+  #persistentWindow {
+    --themeSwitchSize: 60px;
+    --rounding: 20px;
+    position: fixed;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1em;
+    user-select: none;
+    opacity: 0;
+    transition: all 0.5s var(--sleek);
+    padding: 1em;
+    pointer-events: none;
+    bottom: 0;
+
+    transform: translateX(-30px);
+
+    &.active {
+      opacity: 1;
+      transform: translateX(0px);
+      @include breakpoint(tiny) {
+        transform-origin: left center;
+        transform: scale(0.9) translateY(-60px);
+      }
+    }
+    & > input {
+      display: none;
+    }
+  }
+  .tos {
+    width: var(--themeSwitchSize);
+    height: var(--themeSwitchSize);
+    border-radius: var(--rounding);
+    display: grid;
+    place-items: center;
+    font-size: 1.5em;
+    font-family: var(--doto);
+    font-weight: 900;
+    text-decoration: none;
+    color: var(--fore);
+    background: var(--base);
+    border: 2px solid var(--fore);
+    transition:
+      all 0.2s var(--accel),
+      transform 0.3s var(--bounce);
+
+    &:hover {
+      background: var(--base);
+      color: var(--base);
+      border-width: calc(var(--themeSwitchSize) / 2);
+      transition-timing-function: var(--sleek);
+      transform: scale(1.2);
+    }
+    .tosButton {
+      position: absolute;
+      &.material-symbols-rounded {
+        font-size: 1.5em;
+      }
+    }
+  }
+  #themeSwitch {
+    --borderwidth: 2px;
+    position: relative;
+    border: solid var(--borderwidth) var(--fore);
+    width: var(--themeSwitchSize);
+    height: var(--themeSwitchSize);
+    display: grid;
+    place-items: center;
+    transition: all 0.5s var(--sleek);
+    border-radius: var(--rounding);
+
+    background: linear-gradient(90deg, #242428 50%, #f8f4e8 50%);
+    background-size: 210% 100%;
+    background-position: right;
+
+    box-shadow: rgba(36, 36, 40, 0.624) 0 0 20px;
+
+    &.onLight {
+      background: linear-gradient(90deg, #f8f4e8 50%, #242428 50%);
+      background-size: 210% 100%;
+      background-position: right;
+    }
+
+    & > * {
+      cursor: pointer;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      border-radius: var(--rounding);
+      border: 0px solid var(--fore);
+    }
+    &.poked {
+      &::before {
+        animation: splash 1s;
+      }
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      background-position: 60%;
+      transition: all 0.5s var(--spring);
+    }
+
+    &:active {
+      transform: scale(1.3);
+      background-position: 200%;
+      transition: all 0.1s var(--fast);
+    }
+  }
+  @keyframes splash {
+    0% {
+      opacity: 1;
+      transform: scale(0);
+      border-width: 30px;
+    }
+    30% {
+      transform: scale(4);
+    }
+    40% {
+      border-width: 0px;
+    }
+    100% {
+      transform: scale(3);
+      opacity: 0;
+      border-width: 30px;
+    }
+  }
+  .checkboxtrig {
+    min-width: 30px;
+    min-height: 30px;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  #theme-icon {
+    color: white;
+    vertical-align: middle;
+    mix-blend-mode: exclusion;
+    font-size: 2rem;
+
+    &.onLight {
+      color: black;
+    }
+  }
+  #ttoggle {
+    display: none;
+  }
+
+  .horizontalAlign {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    @include breakpoint(tiny) {
+      flex-direction: column-reverse;
+    }
+  }
+  .persistentButtons {
+    text-decoration: none;
+    --borderwidth: 1px;
+    --rounding: 20px;
+    position: relative;
+    border: solid var(--borderwidth) var(--fore);
+    display: grid;
+    place-items: center;
+    transition: all 0.2s var(--sleek);
+    border-radius: var(--rounding);
+
+    background: var(--base);
+    cursor: pointer;
+    padding: 0.25em 1em;
+
+    font-family: var(--doto);
+    font-weight: 900;
+
+    color: var(--fore);
+
+    @include breakpoint(tiny, mobile) {
+      display: none;
+    }
+
+    &:hover {
+      background: var(--prim);
+      border-color: var(--prim);
+    }
+
+    &:active {
+      transform: scale(1.3);
+    }
+  }
+</style>

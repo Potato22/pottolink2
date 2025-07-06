@@ -1,0 +1,141 @@
+---
+
+---
+
+<div id="quirkyContainer" transition:persist transition:name=`quirker`>
+  <div id="quirky-loadAnim">
+    <div class="quirky-gradOverflow">
+      <div id="quirky-gradbar"></div>
+    </div>
+    <!-- <div id="loadStatString">loading nothing..?</div> -->
+  </div>
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+  #quirkyContainer {
+    width: 100vw;
+    height: 100px;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: fixed;
+    z-index: 50;
+    pointer-events: none;
+    background: linear-gradient(transparent, var(--base));
+    transform: translateY(20%);
+    transition: all 0.2s var(--accel);
+    display: none;
+    opacity: 0;
+    &.loading {
+      opacity: 1;
+      transform: translateY(20%);
+      @include breakpoint(tiny, mobile, tablet) {
+        transform: translateY(10%);
+      }
+    }
+  }
+
+  #quirky-loadAnim {
+    position: relative;
+    z-index: 2;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .quirky-gradOverflow {
+      position: relative;
+      width: 100vw;
+      height: 30px;
+      overflow: hidden;
+      border-radius: 20px 20px 0 0;
+      filter: blur(10px);
+      box-shadow: 0 0 12px transparent;
+    }
+
+    #quirky-gradbar {
+      width: 200vw;
+      height: 30px;
+      background-position: -100% 0;
+      animation: wisp 1s infinite;
+      background-repeat: no-repeat;
+    }
+
+    //#loadStatString {
+    //  position: absolute;
+    //  width: 300px;
+    //  top: 15px;
+    //  font-family: var(--doto);
+    //  font-weight: 900;
+    //  text-align: center;
+    //  color: var(--fore);
+    //}
+  }
+  @keyframes wisp {
+    0% {
+      background: linear-gradient(90deg, transparent 50%, var(--accent));
+      background-position: -200vw 0;
+    }
+
+    50% {
+      background: linear-gradient(90deg, transparent 50%, var(--accent));
+      background-position: 0vw 0;
+    }
+    50.01% {
+      background: linear-gradient(90deg, var(--accent), transparent 50%);
+      background-position: 100vw 0;
+    }
+
+    100% {
+      background: linear-gradient(90deg, var(--accent), transparent 50%);
+      background-position: -100vw;
+    }
+  }
+</style>
+
+<script>
+  declare global {
+    interface Window {
+      quirkyLoader: {
+        lock: () => void;
+        unlock: () => void;
+      };
+    }
+  }
+
+  let loaderLock = false;
+  const loaderAnim = document.getElementById("quirkyContainer") as HTMLElement;
+
+  window.quirkyLoader = {
+    lock: () => {
+      loaderLock = true;
+      loaderAnim.style.display = "flex";
+      loaderAnim.classList.add("loading");
+    },
+    unlock: () => {
+      loaderLock = false;
+      loaderAnim.classList.remove("loading");
+      setTimeout(() => {
+        loaderAnim.style.display = "";
+      }, 300);
+    },
+  };
+
+  document.addEventListener("astro:before-preparation", () => {
+    setTimeout(() => {
+      loaderAnim.style.display = "flex";
+    }, 10);
+    loaderAnim.classList.add("loading");
+  });
+  document.addEventListener("astro:page-load", () => {
+    // Only hide if not locked
+    if (!loaderLock) {
+      loaderAnim.classList.remove("loading");
+      setTimeout(() => {
+        loaderAnim.style.display = "";
+      }, 300);
+    }
+  });
+</script>

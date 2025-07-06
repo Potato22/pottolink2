@@ -1,63 +1,37 @@
 ---
-/*
- * Card Component
- * A versatile card component that can be configured for various use cases.
- *
- * @component Card
- *
- * @prop {boolean} [isInvisible=false] - Makes the card invisible
- * @prop {boolean} [isTextCard=false] - Configures the card as a text-only card
- * @prop {"tall" | "extraTall" | "big" | "wide" | "superWide" | "mediumWide"} [size] - Determines the card size
- * @prop {string} [title] - Card title text
- * @prop {"medium" | "big" | "bigger" | "huge" | "reg" | "regRead" | "small"} [titleSize="bigger"] - Size of the title text
- * @prop {string} [content] - Card content text
- * @prop {"medium" | "big" | "bigger" | "huge" | "reg" | "regRead" | "small"} [contentSize="regRead"] - Size of the content text
- * @prop {boolean} [isLink=false] - Renders the card as a clickable link
- * @prop {string} [href] - URL for link cards
- * @prop {boolean} [isReturnLink=false] - Styles the card as a return link
- * @prop {Object} [image] - Image configuration object
- * @prop {string} image.src - Source URL of the image
- * @prop {string} image.alt - Alt text for the image
- * @prop {"left" | "right" | "top" | "bottom" | "center"} [image.position] - Position of the image within the card
- * @prop {string} [class] - Additional CSS classes to apply to the card
- *
- * @slot default - Default slot for additional content
- *
- * @example
- * <Card
- *   isLink={true}
- *   href="/some-path"
- *   title="Card Title"
- *   content="Card content goes here"
- *   image={{
- *     src: "/path/to/image.jpg",
- *     alt: "Description",
- *     position: "center"
- *   }}
- * />
- */
-
-import "../styles/global.scss";
-// Card.astro
+import "../styles/cardObjects.scss";
 interface Props {
-  // Base card properties
+  /** Disables background */
   isInvisible?: boolean;
+
+  /** Textcard */
   isTextCard?: boolean;
 
-  // Size modifiers
+  /** Card size modifier */
   size?: "tall" | "extraTall" | "big" | "wide" | "superWide" | "mediumWide";
 
-  // Text styling
+  /** Text alignment for title and content */
+  alignText?: "left" | "center" | "right";
+
+  /** Title text for the card */
   title?: string;
+
+  /** Size of the title text */
   titleSize?:
     | "medium"
+    | "mediumWide"
     | "big"
+    | "bigWide"
     | "bigger"
     | "huge"
     | "reg"
     | "regRead"
     | "small";
+
+  /** Content text for the card */
   content?: string;
+
+  /** Size of the content text */
   contentSize?:
     | "medium"
     | "big"
@@ -67,19 +41,30 @@ interface Props {
     | "regRead"
     | "small";
 
-  // Link card properties
+  /** If true, the card acts as a link */
   isLink?: boolean;
+
+  /** URL for the link card */
   href?: string;
+
+  /** If true, styles the card as a return/back link */
   isReturnLink?: boolean;
 
-  // Image properties
+  /** Image properties for the card */
   image?: {
+    /** Image source URL */
     src: string;
+    /** Alt text for the image */
     alt: string;
+    /** Image position in the card */
     position?: "left" | "right" | "top" | "bottom" | "center";
   };
 
-  // Additional class names
+  /** Override with FONT NAME only */
+  fontOverrideTitle?: string;
+  fontOverrideContent?: string;
+
+  /** Add custom class */
   class?: string;
 }
 
@@ -87,6 +72,7 @@ const {
   isInvisible = false,
   isTextCard = false,
   size,
+  alignText = "left",
   title,
   titleSize = "bigger",
   content,
@@ -95,113 +81,117 @@ const {
   href,
   isReturnLink = false,
   image,
+  fontOverrideTitle,
+  fontOverrideContent,
   class: className,
 } = Astro.props;
 
-// Base styles that apply to all cards
-const baseStyles = [
-  "relative",
-  "w-full",
-  "max-w-full",
-  "rounded-[20px]",
-  "overflow-hidden",
-  "transition-all",
-  "duration-1000",
-  "ease-[var(--sleek)]",
-  "shadow-lg",
-  !isInvisible && "bg-[var(--basesecondaryD)]",
-  "text-[var(--textD)]",
-];
+// // Helper function to handle font override
+// const getFontStyle = (font?: string) => {
+//   if (!font) return {};
+//   return { style: `font-family: var(${font})` };
+// };
+// use
+// {...getFontStyle(fontOverride)}
 
-// Size-specific styles
-const sizeStyles = size
-  ? {
-      tall: "row-span-2",
-      extraTall: "row-span-3",
-      big: "row-span-2 col-span-2",
-      wide: "col-span-3",
-      superWide: "col-span-4",
-      mediumWide: "col-span-2",
-    }[size]
-  : "";
-
-// Link card specific styles
-const linkStyles = isLink
-  ? [
-      "text-center",
-      "flex",
-      "items-center",
-      "justify-center",
-      "overflow-visible",
-      "transition-all",
-      "duration-500",
-      "ease-[var(--sleek)]",
-      "hover:bg-[var(--accentD)]",
-      "hover:scale-110",
-      "hover:rotate-3",
-      isReturnLink && "hover:bg-[var(--red1)]",
-    ]
-  : [];
-
-// Text styles mapping
-const textSizeStyles = {
-  medium: "text-2xl font-medium",
-  big: "text-3xl font-medium",
-  bigger: "text-4xl font-black",
-  huge: "text-7xl font-black",
-  reg: "text-lg font-normal",
-  regRead: "text-base leading-7 font-medium tracking-tight",
-  small: "text-sm leading-7 font-normal tracking-tight",
-};
-
-// Image position styles
-const imagePositionStyles = {
-  left: "object-left",
-  right: "object-right",
-  top: "object-top",
-  bottom: "object-bottom",
-  center: "object-center",
-};
-
-const titleStyles = [
-  "mb-4",
-  "border-b",
-  "border-[var(--textD)]",
-  textSizeStyles[titleSize],
-];
-
-const contentStyles = [textSizeStyles[contentSize]];
-
-const allStyles = [...baseStyles, sizeStyles, ...linkStyles, className]
+// Build dynamic classes
+const cardClasses = [
+  "cards",
+  isInvisible && "invis",
+  isTextCard && "textcard",
+  size &&
+    {
+      tall: "tallcard",
+      extraTall: "extratallcard",
+      big: "bigcard",
+      wide: "widecard",
+      superWide: "superwidecard",
+      mediumWide: "mediumwidecard",
+    }[size],
+  isLink,
+  isReturnLink && "linkreturn",
+  fontOverrideTitle,
+  fontOverrideContent,
+  className,
+]
   .filter(Boolean)
   .join(" ");
+
+const titleClasses = ["titletextcard", `tc${titleSize}`]
+  .filter(Boolean)
+  .join(" ");
+
+const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
 ---
 
 {
   isLink ? (
-    <a href={href} class={allStyles}>
+    <div class={`${cardClasses} backgroundtext`}>
       {image && (
         <img
           src={image.src}
           alt={image.alt}
-          class={`absolute w-full h-full object-cover ${imagePositionStyles[image.position || "center"]} select-none transition-all duration-200 ease-[var(--sleek)]`}
+          class:list={["imgs", image.position && `${image.position}offset`]}
         />
       )}
-      {title && <div class={titleStyles.join(" ")}>{title}</div>}
-      {content && <div class={contentStyles.join(" ")}>{content}</div>}
-      <slot />
-    </a>
+      <div class="textcontainer">
+        <div class="textgroup">
+          <div class="imgtext">
+            {title && (
+              <div
+                style={{ textAlign: alignText }}
+                class={titleClasses}
+                set:html={title}
+              />
+            )}
+            {content && (
+              <div
+                style={{ textAlign: alignText }}
+                class={contentClasses}
+                set:html={content}
+              />
+            )}
+            <slot />
+          </div>
+          <div class="buttonalign">
+            <a href={href}>
+              <div class="go">
+                <svg class="dynamicarrow" viewBox="0 0 10 10">
+                  <g>
+                    <path class="line" d="M0 5h7" />
+                    <path class="arrow" d="M1 1l4 4-4 4" />
+                  </g>
+                </svg>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   ) : (
-    <div class={allStyles}>
+    <div class={cardClasses}>
       {image && (
         <img
           src={image.src}
           alt={image.alt}
-          class={`absolute w-full h-full object-cover ${imagePositionStyles[image.position || "center"]} select-none transition-all duration-200 ease-[var(--sleek)]`}
+          class:list={["imgs", image.position && `${image.position}offset`]}
         />
       )}
-      {title && <div class={titleStyles.join(" ")}>{title}</div>}
-      {content && <div class={contentStyles.join(" ")}>{content}</div>}
+      {/* if title AND parameter input exists */}
+      {title && (
+        <div
+          style={{ textAlign: alignText, fontFamily: fontOverrideTitle }}
+          class={titleClasses}
+          set:html={title}
+        />
+      )}
+      {content && (
+        <div
+          style={{ textAlign: alignText, fontFamily: fontOverrideContent }}
+          class={contentClasses}
+          set:html={content}
+        />
+      )}
       <slot />
     </div>
   )
