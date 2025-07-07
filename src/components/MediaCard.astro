@@ -45,7 +45,7 @@ const cardSizes =
       data-aos="zoom-in"
       class={`interactive relative imgs cards imgcard ${image.position} ${cardSizes || ""}`}
       src={image.src}
-      data-desc={image.alt}
+      data-title={image.alt}
       alt={image.alt}
     />
   )
@@ -59,7 +59,7 @@ const cardSizes =
       loop
       class={`interactive relative imgs cards imgcard ${video.position}`}
       src={video.src}
-      data-alt={video.alt}
+      data-title={video.alt}
     />
   )
 }

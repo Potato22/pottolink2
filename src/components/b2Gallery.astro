@@ -202,6 +202,7 @@ import Gridbox from "../layouts/Gridbox.astro";
 
       img.dataset.src = item.urlLossy;
       img.alt = item.nameLossy;
+      img.dataset.title = item.nameLossy;
       img.setAttribute("aria-label", item.nameLossy);
 
       Object.assign(img.dataset, {

@@ -294,30 +294,8 @@ hr {
   animation: bouncy .5s infinite
 }
 
-@keyframes holdon {
-  0% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-
-  12% {
-    transform: translateY(1px);
-  }
-
-  24% {
-    transform: translateY(6px);
-  }
-
-  36% {
-    transform: translateY(15px);
-    opacity: .5;
-  }
-
-  100% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-
+.interactive {
+  cursor: pointer;
 }
 
 @keyframes bouncy {
