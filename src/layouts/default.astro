@@ -3,7 +3,7 @@ import { ClientRouter } from "astro:transitions";
 import pottoCeramic from "../assets/Pottoceramic.png";
 import PersistentWindow from "../components/persistentWindow.astro";
 import QuirkyLoad from "../components/quirkyLoad.astro";
-import DynamicNav from "../components/dynamicNav.astro";
+import Minitoast from "../components/utils/minitoast.astro";
 ---
 
 <!doctype html>
@@ -38,16 +38,16 @@ import DynamicNav from "../components/dynamicNav.astro";
 
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back,arrow_circle_right,arrow_downward,close,dark_mode,home,light_mode"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back,arrow_circle_right,arrow_downward,close,dark_mode,home,light_mode,link"
     />
     <title>Potto</title>
     <ClientRouter />
   </head>
   <body transition:animate="none">
-    <PersistentWindow />
+    <PersistentWindow ignoreScrollCheck/>
     <QuirkyLoad />
-    
-    
+    <Minitoast />
+
     <div>
       <slot />
     </div>

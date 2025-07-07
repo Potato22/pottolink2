@@ -1,32 +1,42 @@
 <div id="zoom-overlay">
   <div class="bubbles">
-    <div class="title">jyeah</div>
-    <div class="instructions dismiss">
-      <div class="groupInst imageControl">
-        <div class="instRow"><span class="bind">SCROLL</span> Zoom</div>
-        <div class="instRow"><span class="bind">MOUSE</span> Pan</div>
-        <div class="instRow">
-          <span class="bind">MOUSE L</span>
-          <span class="bind">ESC</span> Close
-        </div>
+    <div class="topRow">
+      <div class="title">jyeah</div>
+      <div id="getUrl" title="Get URL" class="material-symbols-rounded">
+        link
       </div>
-      <div class="groupInst videoControl">
-        <div class="instRow"><span class="bind">CLICK</span> Play/Pause</div>
-        <div class="instRow"><span class="bind">MOUSE_WHEEL</span> Seek</div>
-        <div class="instRow"><span class="bind">ESC</span> Close</div>
+    </div>
+    <div class="instBound">
+      <div class="instructions dismiss">
+        <div class="groupInst imageControl">
+          <div class="instRow"><span class="bind">SCROLL</span> Zoom</div>
+          <div class="instRow"><span class="bind">MOUSE</span> Pan</div>
+          <div class="instRow">
+            <span class="bind">MOUSE L</span>
+            <span class="bind">ESC</span> Close
+          </div>
+        </div>
+        <div class="groupInst videoControl">
+          <div class="instRow"><span class="bind">CLICK</span> Play/Pause</div>
+          <div class="instRow"><span class="bind">MOUSE_WHEEL</span> Seek</div>
+          <div class="instRow"><span class="bind">ESC</span> Close</div>
+        </div>
       </div>
     </div>
   </div>
-  <img id="imgSlot" src="" draggable="false"/>
+  <img id="imgSlot" src="" draggable="false" />
   <video id="vidSlot" controls src="" draggable="false"></video>
 </div>
 
 <script>
   import { devConsole } from "./utils/devConsole";
+  import { pushToast } from "./utils/miniToastLogic";
+
+  let isOnIndex: boolean;
 
   function initZoom() {
     const overlay = document.getElementById("zoom-overlay") as HTMLElement;
-    const bubbles = document.querySelector(".bubbles") as HTMLElement;
+    const instBoundingBox = document.querySelector(".instBound") as HTMLElement;
     const imageSlot = document.getElementById("imgSlot") as HTMLImageElement;
     const videoSlot = document.getElementById("vidSlot") as HTMLVideoElement;
     const instructions = document.querySelector(".instructions") as HTMLElement;
@@ -37,16 +47,24 @@
     const videoControls = document.querySelector(
       ".groupInst.videoControl"
     ) as HTMLElement;
+    const getUrlButton = document.getElementById("getUrl") as HTMLElement;
 
     let scale = 1;
     let originalImageRect: DOMRect | null = null;
     let isVideo: boolean = false;
+    let isMobile: boolean = false;
+
+    if (isOnIndex === true) {
+      getUrlButton.style.display = "none";
+    }
 
     // Use event delegation for dynamically added images
     document.body.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
       if (target.classList.contains("interactive")) {
         const media = target as HTMLImageElement;
+
+        isMobile = window.innerWidth <= 768;
 
         isVideo = media.tagName === "VIDEO";
         if (media.tagName === "VIDEO") {
@@ -57,7 +75,9 @@
           videoSlot.src = media.src;
           videoSlot.setAttribute("autoplay", "true");
           videoSlot.setAttribute("loop", "true");
-          videoSlot.volume = media.dataset.vol ? parseFloat(media.dataset.vol) : 0.8;
+          videoSlot.volume = media.dataset.vol
+            ? parseFloat(media.dataset.vol)
+            : 0.8;
           videoSlot.dataset.alt = media.dataset.title || "";
           imgTitle.textContent = media.dataset.title || "?";
           overlay.style.display = "flex";
@@ -86,7 +106,12 @@
           imageSlot.style.display = "block";
           imageSlot.src = media.src;
           imageSlot.dataset.alt = media.dataset.title || "";
+          imageSlot.dataset.losslessURL = media.dataset.lossless || "";
           imgTitle.textContent = media.dataset.title || "?";
+          devConsole(
+            `Image zooming: ${imageSlot.src} (${imageSlot.dataset.alt})
+            Lossless URL: ${imageSlot.dataset.losslessURL}`
+          );
           overlay.style.display = "flex";
           setTimeout(() => {
             overlay.classList.add("active");
@@ -108,6 +133,7 @@
 
         instructions.style.display = "flex";
         setTimeout(() => {
+          if (isMobile) return;
           instructions.classList.remove("dismiss");
           if (!(media.tagName === "VIDEO")) {
             videoControls.style.display = "none";
@@ -120,11 +146,11 @@
       }
     });
 
-    bubbles.addEventListener("mouseenter", () => {
+    instBoundingBox.addEventListener("mouseenter", () => {
       devConsole("bubbles Hiding instructions");
       instructions.classList.add("dismiss");
     });
-    bubbles.addEventListener("mouseleave", () => {
+    instBoundingBox.addEventListener("mouseleave", () => {
       if (scale <= 1) {
         devConsole("bubbles Showing instructions");
         instructions.classList.remove("dismiss");
@@ -132,7 +158,7 @@
     });
 
     //scrollwheel video seeker
-    videoSlot.addEventListener("wheel", (e) => {
+    overlay.addEventListener("wheel", (e) => {
       e.preventDefault();
       if (!isVideo) return; //no seek image
 
@@ -150,7 +176,7 @@
     // Zoom with wheel
     overlay.addEventListener("wheel", (e) => {
       e.preventDefault();
-      if (isVideo) return; //no zoom video
+      if (isVideo || isMobile) return; //no zoom video/mobile
 
       const zoomIntensity = 0.1;
       scale += e.deltaY < 0 ? zoomIntensity : -zoomIntensity;
@@ -296,22 +322,31 @@
       // );
     }
 
-    // Show instructions when overlay opens
-    // overlay.addEventListener("transitionend", () => {
-    //   if (overlay.style.display === "flex") {
-    //     instructions.style.display = "flex";
-    //     setTimeout(() => {
-    //       instructions.classList.remove("dismiss");
-    //     }, 1);
-    //   }
-    // });
+    getUrlButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (isVideo) {
+        return; // No URL for video
+      } else {
+        const imgSrc = imageSlot.dataset.losslessURL || imageSlot.src;
+        navigator.clipboard.writeText(imgSrc).then(() => {
+          pushToast("Copied!", 2000);
+        });
+      }
+    });
   }
 
-  initZoom();
-
-  document.addEventListener("astro:after-swap", () => {
+  function initSetup() {
+    const currentPath = window.location.pathname;
+    if (currentPath.includes("/") || currentPath === "/") {
+      isOnIndex = true;
+    } else {
+      isOnIndex = false;
+    }
     initZoom();
-  });
+  }
+
+  document.addEventListener("DOMContentLoaded", initSetup);
+  document.addEventListener("astro:after-swap", initSetup);
 </script>
 
 <style lang="scss">
@@ -323,7 +358,7 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    z-index: 1000;
+    z-index: 50;
     opacity: 0;
     transition: opacity 0.2s var(--sleek);
     pointer-events: none;
@@ -358,41 +393,27 @@
       transform: scale(1);
     }
   }
+  .topRow {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 62px;
+  }
   .bubbles {
     position: fixed;
+    width: 100%;
     top: 20px;
-    left: 20px;
+    padding: 0em 1.2em;
     font-size: 1rem;
     font-family: var(--content);
     z-index: 10;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 1.2em;
-
-    & .title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--fore);
-    }
-
-    & .instructions {
-      max-width: 250px;
-      transition:
-        transform 0.3s var(--sleek),
-        opacity 0.2s var(--sleek);
-      & .groupInst {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2em;
-      }
-      &.dismiss {
-        transition-timing-function: var(--accel);
-        transform: translateX(-200%);
-        opacity: 0;
-      }
-    }
     & .instructions,
-    .title {
+    .title,
+    #getUrl {
       color: var(--fore);
       background: rgba(var(--baseRGB), 0.8);
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -417,6 +438,56 @@
       padding: 0.2em 0.5em;
       border: 1px solid var(--accent);
       border-radius: 20px;
+    }
+
+    & .title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--fore);
+      min-width: 210px;
+    }
+
+    & .instructions {
+      max-width: 250px;
+      width: 210px;
+      transition:
+        transform 0.3s var(--sleek),
+        opacity 0.2s var(--sleek);
+      & .groupInst {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2em;
+      }
+      &.dismiss {
+        transition-timing-function: var(--accel);
+        transform: translateX(-200%);
+        opacity: 0;
+      }
+    }
+
+    #getUrl {
+      display: grid;
+      place-items: center;
+      height: 62px;
+      width: 62px;
+      padding: 0.5em;
+      background: rgba(var(--baseRGB), 0.5);
+      border: 1px solid var(--fore);
+      color: var(--fore);
+      transition: all 0.2s var(--sleek);
+      text-decoration: none;
+      font-variation-settings: "wght" 500;
+      &:hover {
+        cursor: pointer;
+        background: rgba(var(--baseRGB), 0.7);
+        transform: scale(1.1);
+        font-variation-settings: "wght" 800;
+      }
+      &:active {
+        transform: scale(0.9);
+        background: rgba(var(--baseRGB), 0.9);
+        font-variation-settings: "wght" 600;
+      }
     }
   }
 </style>

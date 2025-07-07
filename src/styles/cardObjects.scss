@@ -100,27 +100,64 @@
 
 .tallcard {
     grid-row: span 2/auto;
+
+    @include breakpoint(tiny, mobile, tablet, square) {
+        grid-row: span 1/auto;
+    }
 }
 
 .extratallcard {
     grid-row: span 3/auto;
+
+    @include breakpoint(tiny, mobile, tablet, square) {
+        grid-row: span 2/auto;
+    }
 }
 
 .bigcard {
     grid-row: span 2/auto;
     grid-column: span 2/auto;
+
+    @include breakpoint(tiny, mobile, tablet, square) {
+        grid-row: 1/auto;
+        grid-column: 1/auto;
+    }
 }
 
 .widecard {
     grid-column: span 3/auto;
+
+    @include breakpoint(tablet) {
+        grid-column: span 2/auto;
+    }
+
+    @include breakpoint(tiny, mobile, square) {
+        grid-column: span 1/auto;
+    }
 }
 
 .superwidecard {
     grid-column: span 4/auto;
+
+    @include breakpoint(tablet, square) {
+        grid-column: span 3/auto;
+    }
+
+    @include breakpoint(mobile) {
+        grid-column: span 2/auto;
+    }
+
+    @include breakpoint(tiny) {
+        grid-column: span 1/auto;
+    }
 }
 
 .mediumwidecard {
     grid-column: span 2/auto;
+
+    @include breakpoint(tiny, mobile, square) {
+        grid-column: span 1/auto;
+    }
 }
 
 .ghost {
@@ -144,109 +181,8 @@
     grid-column: span 3/auto;
 }
 
-@include breakpoint(tablet) {
-    .tallcard {
-        grid-row: span 1/auto;
-    }
-
-    .extratallcard {
-        grid-column: span 1/auto;
-    }
-
-    .bigcard {
-        grid-row: span 1/auto;
-        grid-column: span 1/auto;
-    }
-
-    .smallwidecard {
-        grid-column: span 1/auto;
-    }
-
-    .widecard {
-        grid-row: span 1/auto;
-        grid-column: span 1/auto;
-    }
-
-    .superwidecard {
-        grid-column: span 2/auto;
-    }
-
-    .widecardp {
-        grid-column: span auto/auto;
-    }
-
-    .mediumwidecard {
-        grid-column: span 1/auto;
-    }
-
-    .dynamic-narrowvp-wide-tall {
-        grid-column: span 2/auto;
-    }
-}
-
-@include breakpoint(mobile) {
-    .read {
-        grid-row: span 2/auto;
-    }
-}
-
-@include breakpoint(desktop) {
-    .dynamicUpscale-small-mediumwide {
-        grid-row: span 1/auto;
-        grid-column: span 2/auto;
-    }
-
-    .ghost {
-        display: block;
-    }
-}
-
-@include breakpoint(tablet) {
-    .dynamic-tall-mediumwide {
-        grid-column: span 2/auto;
-        grid-row: span 1/auto;
-    }
-
-    .dynamic-mediumwide-tall {
-        grid-column: span 1/auto;
-        grid-row: span 2/auto;
-    }
-}
-
-@include breakpoint(mobile) {
-
-    .dynamic-tall-mediumwide,
-    .dynamic-mediumwide-tall {
-        grid-column: span 1/auto;
-        grid-row: span 1/auto;
-    }
-
-    .superwidecard {
-        grid-column: span 1/auto;
-    }
-
-    .dynamic-narrowvp-wide-tall {
-        grid-column: span 2/auto;
-        grid-row: span 2/auto;
-    }
-}
-
-@include breakpoint(tablet) {
-    .titletextcard {
-        font-size: 1.5rem;
-    }
-
-    .big {
-        font-size: 2.5rem;
-        font-family: var(--display);
-        font-weight: 500;
-    }
-}
-
-@include breakpoint(tiny) {
-    .titletextcard {
-        font-size: 1.3rem;
-    }
+.ghost {
+    display: block;
 }
 
 /*textcard--------------------------------*/
@@ -265,6 +201,10 @@
     font-weight: 900;
     margin-bottom: 1rem;
     border-bottom: solid var(--fore) 1px;
+
+    @include breakpoint(tablet) {
+        font-size: 1.5rem;
+    }
 }
 
 /*sizes*/
@@ -272,40 +212,95 @@
     font-size: 5rem;
     font-family: var(--display);
     font-weight: 500;
+
+    @include breakpoint(tablet, square) {
+        font-size: 3.5rem;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 2.5rem;
+    }
 }
+
 .tcmediumWide {
     font-size: 5rem;
     font-family: var(--display);
     font-weight: 900;
+
+    @include breakpoint(tablet, square) {
+        font-size: 3.5rem;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 2.5rem;
+    }
 }
 
 .tcbig {
     font-size: 7.5rem;
     font-family: var(--display);
     font-weight: 500;
+
+    @include breakpoint(tablet, square) {
+        font-size: 5rem;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 4rem;
+    }
 }
 
 .tcbigWide {
     font-size: 7.5rem;
     font-family: var(--display);
     font-weight: 900;
+
+    @include breakpoint(tablet, square) {
+        font-size: 5rem;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 4rem;
+    }
 }
 
 .tcbigger {
     font-size: 8rem;
     font-family: var(--display);
     font-weight: 900;
+
+    @include breakpoint(tablet, square) {
+        font-size: 5rem;
+        font-weight: 720;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 4rem;
+        font-weight: 720;
+    }
 }
 
 .tchuge {
-    font-size: 12rem;
+    font-size: 11rem;
     font-family: var(--display);
     font-weight: 900;
+
+    @include breakpoint(tablet, square) {
+        font-size: 7rem;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 3rem;
+    }
 }
 
 .tcreg {
     font-size: 1.2rem;
     font-family: var(--contentsecondary);
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 1rem;
+    }
 }
 
 .tcregread {
@@ -314,6 +309,10 @@
     font-size: 1.15rem;
     font-weight: 500;
     letter-spacing: -.62pt;
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 1rem;
+    }
 }
 
 .tcsmall {
@@ -340,24 +339,6 @@
 
 .wlimiter {
     width: 70%;
-}
-
-@media screen and (max-width: 1390px) {
-    .titletextcard {
-        font-size: 1.5rem;
-    }
-
-    .big {
-        font-size: 2.5rem;
-        font-family: var(--display);
-        font-weight: 500;
-    }
-}
-
-@media screen and (max-width: 500px) {
-    .titletextcard {
-        font-size: 1.3rem;
-    }
 }
 
 /*textcard--------------------------------*/
