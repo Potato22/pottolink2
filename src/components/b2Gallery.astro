@@ -1,6 +1,5 @@
 ---
 import Gridbox from "../layouts/Gridbox.astro";
-import "../styles/cardObjects.scss";
 ---
 
 <div class="galleryLoadingInd"></div>
@@ -198,7 +197,7 @@ import "../styles/cardObjects.scss";
 
       const img = new Image();
       //img.setAttribute("data-aos", "zoom-in");
-      img.className = "interactive imgs cards b2Imgs imgcard";
+      img.className = "interactive imgs relative cards imgcard b2Imgs";
       //img.setAttribute("orbReact", "true");
 
       img.dataset.src = item.urlLossy;
