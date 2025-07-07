@@ -100,6 +100,9 @@ body {
   --brightness: brightness(1.2);
   --faded: brightness(0.5);
   --inverto: invert(1);
+
+  --acrylicBackdrop: blur(200px) brightness(2) saturate(2);
+  --acrylicBackdropStrong: blur(300px) brightness(2) saturate(2);
 }
 
 [data-theme=dark] {
@@ -133,6 +136,9 @@ body {
 
   --brightness: brightness(.8);
   --inverto: invert(0);
+
+  --acrylicBackdrop: blur(200px) brightness(.8) saturate(2);
+  --acrylicBackdropStrong: blur(300px) brightness(.8) saturate(2);
 }
 
 a {

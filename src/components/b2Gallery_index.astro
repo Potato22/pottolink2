@@ -61,7 +61,7 @@ import Gridbox from "../layouts/Gridbox.astro";
     fetchDisplay()
       .then((data: any[] | null) => {
         if (data) {
-          console.log("Fetched files:", data);
+          //console.log("Fetched files:", data);
           console.log("filtering");
           // Data processing
           type DisplayImage = {
@@ -129,8 +129,8 @@ import Gridbox from "../layouts/Gridbox.astro";
           );
           const displayCount = displayImages.slice(0, 8);
 
-          console.log("Display Data:", displayCount);
-          console.log("Lossless Data:", losslessImages);
+          // console.log("Display Data:", displayCount);
+          // console.log("Lossless Data:", losslessImages);
 
           const latestWorkGrid = document.getElementById("latestWorks");
           const imgDataFragment = document.createDocumentFragment();

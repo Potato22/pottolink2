@@ -73,28 +73,16 @@
 </nav>
 
 <script>
-  // Helper for fade in/out using classes
-  //   function fadeIn(el: HTMLElement, duration = 300) {
-  //     el.style.opacity = "0";
-  //     el.style.display = "flex";
-  //     setTimeout(() => {
-  //       el.style.transition = `opacity ${duration}ms`;
-  //       el.style.opacity = "1";
-  //     }, 10);
-  //   }
-  //   function fadeOut(el: HTMLElement, duration = 300) {
-  //     el.style.transition = `opacity ${duration}ms`;
-  //     el.style.opacity = "0";
-  //     setTimeout(() => {
-  //       el.style.display = "none";
-  //     }, duration);
-  //   }
+  import { devConsole } from "./utils/devConsole";
 
-  window.addEventListener("DOMContentLoaded", () => {
+  let isGalleryPage = false;
+
+  function navLogic() {
     let winH = window.innerHeight;
     const nav = document.querySelector(".dynamicnav");
 
     function onScrollResize() {
+      //devConsole('onScrollResize')
       const dimmer = document.querySelector(".dimmer") as HTMLElement | null;
       const creationDialog = document.querySelector(".creationdialog");
       const X = document.querySelector(".xcont") as HTMLElement | null;
@@ -119,6 +107,7 @@
     const xconts = document.querySelectorAll(".xcont, .cbutton");
     const X = document.querySelector(".xcont") as HTMLElement | null;
 
+    devConsole(creation && dimmer && creationDialog ? "true" : "false");
     if (creation && dimmer && creationDialog) {
       creation.addEventListener("click", () => {
         dimmer.classList.add("active");
@@ -138,6 +127,8 @@
 
     // Section highlight logic
     function chapter() {
+      if (!isGalleryPage) return;
+      devConsole('chapter')
       // Helper to get offset safely
       function getOffsetTop(id: string): number {
         const el = document.getElementById(id);
@@ -197,7 +188,19 @@
     }
     chapter();
     window.addEventListener("scroll", chapter);
-  });
+  }
+
+  function initPreset() {
+    const currentPath = window.location.pathname;
+    if (currentPath.includes("gallery")) {
+      isGalleryPage = true;
+    } else {
+      isGalleryPage = false;
+    }
+    navLogic();
+  }
+  document.addEventListener("DOMContentLoaded", initPreset);
+  document.addEventListener("astro:after-swap", initPreset);
 </script>
 
 <style lang="scss">
@@ -209,10 +212,11 @@
     align-items: center;
     padding: 0 1rem 0 0;
     z-index: 5;
-    background: rgba(var(--baseRGB), 0.8);
-    backdrop-filter: blur(120px);
-    transition: background 1s var(--sleek);
-    transition: transform 0.2s var(--sleek);
+    background: rgba(var(--baseRGB), 0.7);
+    backdrop-filter: var(--acrylicBackdrop);
+    transition:
+      background 1s var(--sleek),
+      transform 0.2s var(--sleek);
     height: 50px;
   }
 
@@ -313,7 +317,7 @@
     width: 100%;
     height: 100%;
     background: rgba(var(--baseRGB), 0.5);
-    backdrop-filter: blur(300px);
+    backdrop-filter: var(--acrylicBackdropStrong);
     display: grid;
     place-items: center;
     animation: contentdialog 0.8s forwards var(--sleek);
@@ -374,7 +378,10 @@
     border-radius: 20px;
     padding: 2em;
     border: 1px solid var(--fore);
-    transition: transform 0.4s var(--sleek), background 0.2s var(--sleek), opacity .1s var(--sleek);
+    transition:
+      transform 0.4s var(--sleek),
+      background 0.2s var(--sleek),
+      opacity 0.1s var(--sleek);
     transform: translateX(50%);
     opacity: 0;
     cursor: pointer;

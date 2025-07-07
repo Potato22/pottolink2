@@ -327,7 +327,7 @@
     opacity: 0;
     transition: opacity 0.2s var(--sleek);
     pointer-events: none;
-    backdrop-filter: blur(300px);
+    backdrop-filter: var(--acrylicBackdropStrong);
     &.active {
       opacity: 1;
       pointer-events: auto;
@@ -394,9 +394,9 @@
     & .instructions,
     .title {
       color: var(--fore);
-      background: rgba(var(--baseRGB), 0.5);
+      background: rgba(var(--baseRGB), 0.8);
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(200px) brightness(4);
+      backdrop-filter: var(--acrylicBackdrop);
       padding: 10px;
       border-radius: 20px;
       padding: 1em;

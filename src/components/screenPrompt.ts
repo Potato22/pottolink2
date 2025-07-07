@@ -31,12 +31,6 @@ export async function screenPrompt(mode: string) {
 
     const sBtn = document.querySelectorAll(".sBtn") as NodeListOf<HTMLElement>
 
-    async function goRead() {
-        screenPrompt("close")
-        await sleep(300)
-        navigate("/tos")
-    }
-
     switch (mode) {
         case "initialize":
             screenPrompt("reset");
@@ -62,32 +56,31 @@ export async function screenPrompt(mode: string) {
                 btns.dataset.highlight = "";
             })
             break;
-        case "noTos":
-            screenPrompt("initialize");
+        // case "noTos":
+        //     screenPrompt("initialize");
 
-            await sleep(400)
+        //     await sleep(400)
 
-            const b0 = document.getElementById("screen-button0") as HTMLElement;
-            const b1 = document.getElementById("screen-button1") as HTMLElement;
-            const b2 = document.getElementById("screen-button2") as HTMLElement;
+        //     const b0 = document.getElementById("screen-button0") as HTMLElement;
+        //     const b1 = document.getElementById("screen-button1") as HTMLElement;
+        //     const b2 = document.getElementById("screen-button2") as HTMLElement;
 
-            screenHeading.innerHTML = "Welcome! I'd advise you to read the TOS first.";
-            screenHeading.style.opacity = "1";
-            screenButtons.style.opacity = "1";
-            screenButtons.style.pointerEvents = "all";
-            b0.innerHTML = "Close";
-            b1.innerHTML = "Only checking in";
-            b2.innerHTML = "OK";
-            b2.dataset.highlight = "true";
-            b0.addEventListener("click", () => screenPrompt("close"));
-            b1.addEventListener("click", () => promptStoreTarget(null, "go"));
-            b2.addEventListener("click", goRead);
-            document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape") {
-                    screenPrompt("close");
-                }
-            });
-            break;
+        //     screenHeading.innerHTML = "Welcome! I'd advise you to read the TOS first.";
+        //     screenHeading.style.opacity = "1";
+        //     screenButtons.style.opacity = "1";
+        //     screenButtons.style.pointerEvents = "all";
+        //     b0.innerHTML = "Close";
+        //     b1.innerHTML = "Only checking in";
+        //     b2.innerHTML = "OK";
+        //     b2.dataset.highlight = "true";
+        //     b0.addEventListener("click", () => screenPrompt("close"));
+        //     b1.addEventListener("click", () => promptStoreTarget(null, "go"));
+        //     document.addEventListener("keydown", (event) => {
+        //         if (event.key === "Escape") {
+        //             screenPrompt("close");
+        //         }
+        //     });
+        //     break;
         default:
             break;
     }
