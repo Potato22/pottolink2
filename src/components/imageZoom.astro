@@ -1,37 +1,54 @@
 <div id="zoom-overlay">
   <div class="bubbles">
     <div class="title">jyeah</div>
-    <div class="instructions">
-      <div class="instRow"><span class="bind">SCROLL</span> Zoom</div>
-      <div class="instRow"><span class="bind">MOUSE</span> Pan</div>
-      <div class="instRow">
-        <span class="bind">MOUSE L</span> or <span class="bind">ESC</span> Close
+    <div class="instructions dismiss">
+      <div class="groupInst imageControl">
+        <div class="instRow"><span class="bind">SCROLL</span> Zoom</div>
+        <div class="instRow"><span class="bind">MOUSE</span> Pan</div>
+        <div class="instRow">
+          <span class="bind">MOUSE L</span>
+          <span class="bind">ESC</span> Close
+        </div>
+      </div>
+      <div class="groupInst videoControl">
+        <div class="instRow"><span class="bind">CLICK</span> Play/Pause</div>
+        <div class="instRow"><span class="bind">MOUSE_WHEEL</span> Seek</div>
+        <div class="instRow"><span class="bind">ESC</span> Close</div>
       </div>
     </div>
   </div>
-  <img id="imgSlot" src="" />
-  <video id="vidSlot" src=""></video>
+  <img id="imgSlot" src="" draggable="false"/>
+  <video id="vidSlot" controls src="" draggable="false"></video>
 </div>
 
 <script>
-  import { init } from "astro/virtual-modules/prefetch.js";
   import { devConsole } from "./utils/devConsole";
 
   function initZoom() {
     const overlay = document.getElementById("zoom-overlay") as HTMLElement;
+    const bubbles = document.querySelector(".bubbles") as HTMLElement;
     const imageSlot = document.getElementById("imgSlot") as HTMLImageElement;
     const videoSlot = document.getElementById("vidSlot") as HTMLVideoElement;
     const instructions = document.querySelector(".instructions") as HTMLElement;
     const imgTitle = document.querySelector(".title") as HTMLElement;
+    const imageControls = document.querySelector(
+      ".groupInst.imageControl"
+    ) as HTMLElement;
+    const videoControls = document.querySelector(
+      ".groupInst.videoControl"
+    ) as HTMLElement;
 
     let scale = 1;
     let originalImageRect: DOMRect | null = null;
+    let isVideo: boolean = false;
 
     // Use event delegation for dynamically added images
     document.body.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
       if (target.classList.contains("interactive")) {
         const media = target as HTMLImageElement;
+
+        isVideo = media.tagName === "VIDEO";
         if (media.tagName === "VIDEO") {
           // Handle video zoom
           imageSlot.style.display = "none";
@@ -39,9 +56,13 @@
           videoSlot.style.display = "block";
           videoSlot.src = media.src;
           videoSlot.setAttribute("autoplay", "true");
+          videoSlot.setAttribute("loop", "true");
+          videoSlot.volume = media.dataset.vol ? parseFloat(media.dataset.vol) : 0.8;
           videoSlot.dataset.alt = media.dataset.title || "";
           imgTitle.textContent = media.dataset.title || "?";
           overlay.style.display = "flex";
+          overlay.style.cursor = "auto";
+
           setTimeout(() => {
             overlay.classList.add("active");
             setTimeout(() => {
@@ -74,7 +95,7 @@
             }, 100);
           }, 1);
           scale = 1;
-  
+
           imageSlot.onload = () => {
             imageSlot.style.transform = "none";
             requestAnimationFrame(() => {
@@ -84,29 +105,85 @@
             });
           };
         }
+
+        instructions.style.display = "flex";
+        setTimeout(() => {
+          instructions.classList.remove("dismiss");
+          if (!(media.tagName === "VIDEO")) {
+            videoControls.style.display = "none";
+            imageControls.style.display = "flex";
+          } else {
+            videoControls.style.display = "flex";
+            imageControls.style.display = "none";
+          }
+        }, 1);
+      }
+    });
+
+    bubbles.addEventListener("mouseenter", () => {
+      devConsole("bubbles Hiding instructions");
+      instructions.classList.add("dismiss");
+    });
+    bubbles.addEventListener("mouseleave", () => {
+      if (scale <= 1) {
+        devConsole("bubbles Showing instructions");
+        instructions.classList.remove("dismiss");
+      }
+    });
+
+    //scrollwheel video seeker
+    videoSlot.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      if (!isVideo) return; //no seek image
+
+      const seekTime = 0.1; // seconds
+      if (e.deltaY < 0) {
+        videoSlot.currentTime = Math.min(
+          videoSlot.duration,
+          videoSlot.currentTime + seekTime
+        );
+      } else {
+        videoSlot.currentTime = Math.max(0, videoSlot.currentTime - seekTime);
       }
     });
 
     // Zoom with wheel
     overlay.addEventListener("wheel", (e) => {
       e.preventDefault();
+      if (isVideo) return; //no zoom video
 
       const zoomIntensity = 0.1;
       scale += e.deltaY < 0 ? zoomIntensity : -zoomIntensity;
       scale = Math.max(0.5, Math.min(scale, 5));
 
       updateTransform(e.clientX, e.clientY);
+
+      // Show/hide instructions based on zoom level
+      if (scale > 1) {
+        devConsole("Hiding instructions");
+        instructions.classList.add("dismiss");
+      } else {
+        devConsole("Showing instructions");
+        instructions.classList.remove("dismiss");
+      }
     });
 
     // Pan with mouse movement
     overlay.addEventListener("mousemove", (e) => {
+      if (isVideo) return; //no zoom video
       updateTransform(e.clientX, e.clientY);
     });
 
     // Close overlay
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) {
-        closeOverlay();
+      if (scale <= 1) {
+        if (e.target === overlay) {
+          closeOverlay();
+        }
+      } else {
+        scale = 1; // Reset scale on overlay click
+        instructions.classList.remove("dismiss");
+        updateTransform(e.clientX, e.clientY);
       }
     });
 
@@ -118,6 +195,8 @@
 
     function closeOverlay() {
       overlay.classList.remove("active");
+      devConsole("closeOverlay() Hiding instructions");
+      instructions.classList.add("dismiss");
       // Stop and reset video if visible
       if (videoSlot.style.display !== "none") {
         videoSlot.pause();
@@ -130,6 +209,10 @@
         instructions.style.display = "none";
       }, 200);
     }
+
+    let currentTransform = { x: 0, y: 0, scale: 1 };
+    let targetTransform = { x: 0, y: 0, scale: 1 };
+    let animating = false;
 
     function updateTransform(mouseX: number, mouseY: number) {
       if (!originalImageRect) return;
@@ -164,23 +247,64 @@
         translateX = -offsetX * maxTranslateX;
         translateY = -offsetY * maxTranslateY;
       }
+      // Set target transform
+      targetTransform = { x: translateX, y: translateY, scale };
 
-      imageSlot.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      if (!animating) animateTransform();
 
-      // Show/hide instructions based on zoom level
-      if (scale > 0) {
-        instructions.style.display = "flex";
-      } else {
-        instructions.style.display = "none";
+      function animateTransform() {
+        animating = true;
+        const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+        const smoothing = 0.2; // Lower = smoother/slower
+
+        currentTransform.x = lerp(
+          currentTransform.x,
+          targetTransform.x,
+          smoothing
+        );
+        currentTransform.y = lerp(
+          currentTransform.y,
+          targetTransform.y,
+          smoothing
+        );
+        currentTransform.scale = lerp(
+          currentTransform.scale,
+          targetTransform.scale,
+          smoothing
+        );
+
+        imageSlot.style.transform = `translate(${currentTransform.x}px, ${currentTransform.y}px) scale(${currentTransform.scale})`;
+
+        // If close enough to target, stop animating
+        if (
+          Math.abs(currentTransform.x - targetTransform.x) > 0.5 ||
+          Math.abs(currentTransform.y - targetTransform.y) > 0.5 ||
+          Math.abs(currentTransform.scale - targetTransform.scale) > 0.01
+        ) {
+          requestAnimationFrame(animateTransform);
+        } else {
+          // Snap to target at the end
+          currentTransform = { ...targetTransform };
+          imageSlot.style.transform = `translate(${currentTransform.x}px, ${currentTransform.y}px) scale(${currentTransform.scale})`;
+          animating = false;
+        }
       }
+
+      //imageSlot.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      // devConsole(
+      // `Transform: translate(${translateX}px, ${translateY}px) scale(${scale})`
+      // );
     }
 
     // Show instructions when overlay opens
-    overlay.addEventListener("transitionend", () => {
-      if (overlay.style.display === "flex") {
-        instructions.style.display = "flex";
-      }
-    });
+    // overlay.addEventListener("transitionend", () => {
+    //   if (overlay.style.display === "flex") {
+    //     instructions.style.display = "flex";
+    //     setTimeout(() => {
+    //       instructions.classList.remove("dismiss");
+    //     }, 1);
+    //   }
+    // });
   }
 
   initZoom();
@@ -200,7 +324,6 @@
     align-items: center;
     overflow: hidden;
     z-index: 1000;
-    cursor: move;
     opacity: 0;
     transition: opacity 0.2s var(--sleek);
     pointer-events: none;
@@ -216,12 +339,15 @@
     max-width: 99%;
     max-height: 99%;
     user-select: none;
-    pointer-events: none;
     opacity: 1;
     &.active {
       opacity: 1;
       animation: pop 0.5s var(--sleek);
     }
+  }
+
+  #imgSlot {
+    pointer-events: none;
   }
 
   @keyframes pop {
@@ -242,34 +368,41 @@
     display: flex;
     flex-direction: column;
     gap: 1.2em;
-    //animation: goaway 0.2s var(--sleek) 5s forwards;
 
     & .title {
       font-size: 1.2rem;
       font-weight: bold;
       color: var(--fore);
     }
+
+    & .instructions {
+      max-width: 250px;
+      transition:
+        transform 0.3s var(--sleek),
+        opacity 0.2s var(--sleek);
+      & .groupInst {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2em;
+      }
+      &.dismiss {
+        transition-timing-function: var(--accel);
+        transform: translateX(-200%);
+        opacity: 0;
+      }
+    }
     & .instructions,
     .title {
       color: var(--fore);
       background: rgba(var(--baseRGB), 0.5);
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(300px) brightness(2.6);
+      backdrop-filter: blur(200px) brightness(4);
       padding: 10px;
       border-radius: 20px;
       padding: 1em;
       display: flex;
       flex-direction: column;
       gap: 1.2em;
-    }
-
-    @keyframes goaway {
-      from {
-        opacity: 1;
-      }
-      to {
-        opacity: 0;
-      }
     }
 
     &.instRow {
