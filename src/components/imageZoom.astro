@@ -4,7 +4,7 @@
 </div>
 
 <script>
-import { devConsole } from "./utils/devConsole";
+  import { devConsole } from "./utils/devConsole";
 
   const overlay = document.getElementById("zoom-overlay") as HTMLElement;
   const zoomedImg = document.getElementById("imgSlot") as HTMLImageElement;
@@ -13,7 +13,6 @@ import { devConsole } from "./utils/devConsole";
   let scale = 1;
   let originalImageRect: DOMRect | null = null;
 
-  // Open zoom overlay
   document.querySelectorAll(".interactive").forEach((img) => {
     const imgEL = img as HTMLImageElement;
     imgEL.addEventListener("click", () => {
@@ -23,6 +22,8 @@ import { devConsole } from "./utils/devConsole";
       scale = 1;
 
       zoomedImg.onload = () => {
+        //reset and wait
+        zoomedImg.style.transform = "none";
         requestAnimationFrame(() => {
           originalImageRect = zoomedImg.getBoundingClientRect();
           devConsole(originalImageRect);
@@ -86,12 +87,13 @@ import { devConsole } from "./utils/devConsole";
       const scaledWidth = originalImageRect.width * scale;
       const scaledHeight = originalImageRect.height * scale;
 
-      // Calculate maximum translation (how far we can move before showing empty space)
-      const maxTranslateX = Math.max(0, (scaledWidth - window.innerWidth) / 2);
-      const maxTranslateY = Math.max(
-        0,
-        (scaledHeight - window.innerHeight) / 2
-      );
+      const overpan = 0.2;
+      const maxTranslateX =
+        Math.max(0, (scaledWidth - window.innerWidth) / 2) +
+        scaledWidth * overpan;
+      const maxTranslateY =
+        Math.max(0, (scaledHeight - window.innerHeight) / 2) +
+        scaledHeight * overpan;
 
       // Apply movement proportional to the available space
       // Invert the movement so moving mouse right moves image left (magnifying glass effect)
