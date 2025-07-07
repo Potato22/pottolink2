@@ -3,7 +3,7 @@ import Gridbox from "../layouts/Gridbox.astro";
 ---
 
 <div class="galleryLoadingInd"></div>
-<Gridbox id="latestWorks" />
+<Gridbox id="galleryGrid" />
 
 <div id="loadMore" class="wideGo" style="display: none; text-align: center;">
   <a class="wideGoTitle"
@@ -92,9 +92,9 @@ import Gridbox from "../layouts/Gridbox.astro";
       const sentinel = document.createElement("div");
       sentinel.id = "scroll-sentinel";
       sentinel.style.height = "1px";
-      const latestWorks = document.getElementById("latestWorks");
-      if (latestWorks) {
-        latestWorks.after(sentinel);
+      const galleryGrid = document.getElementById("galleryGrid");
+      if (galleryGrid) {
+        galleryGrid.after(sentinel);
       }
 
       const observer = new IntersectionObserver(
@@ -187,7 +187,7 @@ import Gridbox from "../layouts/Gridbox.astro";
     });
 
     const displayCount = GalleryState.allDisplayImages.slice(start, end);
-    const latestWorkGrid = document.getElementById("latestWorks");
+    const latestWorkGrid = document.getElementById("galleryGrid");
     if (!latestWorkGrid) return;
     const imgDataFragment = document.createDocumentFragment();
 
@@ -382,6 +382,9 @@ import Gridbox from "../layouts/Gridbox.astro";
 
     // Start the application
     initialize();
+    document.addEventListener("astro:after-swap", () => {
+      initialize();
+    });
   })();
 </script>
 

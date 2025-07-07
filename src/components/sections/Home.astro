@@ -2,6 +2,7 @@
 import Gridbox from "../../layouts/Gridbox.astro";
 import CardObject from "../../components/Card-object.astro";
 import B2GalleryIndex from "../b2Gallery_index.astro";
+import B2Gallery from "../b2Gallery.astro";
 import MediaCard from "../MediaCard.astro";
 ---
 
@@ -90,6 +91,7 @@ import MediaCard from "../MediaCard.astro";
   </Gridbox>
 
   <B2GalleryIndex />
+  <!-- <B2Gallery /> -->
 
   <a href="./gallery" class="wideGo">
     <div class="wideGoTitle">
@@ -105,17 +107,19 @@ import MediaCard from "../MediaCard.astro";
 
   <Gridbox>
     <MediaCard
-    image={{
-      src: "/content/illus/artist.jpg",
-      alt: "Artist mary",
-      position: "center",
-    }} />
+      image={{
+        src: "/content/illus/artist.jpg",
+        alt: "Artist mary",
+        position: "center",
+      }}
+    />
     <MediaCard
-    image={{
-      src: "/content/illus/secondmonth.jpg",
-      alt: "Artist mary",
-      position: "center",
-    }} />
+      image={{
+        src: "/content/illus/secondmonth.jpg",
+        alt: "Artist mary",
+        position: "center",
+      }}
+    />
   </Gridbox>
 </div>
 

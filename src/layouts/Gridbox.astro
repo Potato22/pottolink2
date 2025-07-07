@@ -1,14 +1,15 @@
 ---
 interface Props {
   id?: string;
+  className?: string;
   deflateBottom?: boolean;
   deflateTop?: boolean;
 }
-const { id, deflateBottom, deflateTop } = Astro.props;
+const { id, className, deflateBottom, deflateTop } = Astro.props;
 ---
 
 <div
-  class="mainGrid"
+  class=`mainGrid ${className || ""}`
   id={id}
   style=`${deflateBottom ? "padding-bottom: 0;" : ""} ${deflateTop ? "padding-top: 0;" : ""}`
 >
