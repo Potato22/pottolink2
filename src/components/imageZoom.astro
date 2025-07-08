@@ -1,4 +1,5 @@
 <div id="zoom-overlay">
+  <div class="infoBoundRect"></div>
   <div class="zoomLevel">100%</div>
   <div class="bubbles">
     <div class="topRow">
@@ -7,21 +8,19 @@
         link
       </div>
     </div>
-    <div class="instBound">
-      <div class="instructions dismiss">
-        <div class="groupInst imageControl">
-          <div class="instRow"><span class="bind">SCROLL</span> Zoom</div>
-          <div class="instRow"><span class="bind">MOUSE</span> Pan</div>
-          <div class="instRow">
-            <span class="bind">MOUSE L</span>
-            <span class="bind">ESC</span> Close
-          </div>
+    <div class="instructions dismiss">
+      <div class="groupInst imageControl">
+        <div class="instRow"><span class="bind">SCROLL</span> Zoom</div>
+        <div class="instRow"><span class="bind">MOUSE</span> Pan</div>
+        <div class="instRow">
+          <span class="bind">MOUSE L</span>
+          <span class="bind">ESC</span> Close
         </div>
-        <div class="groupInst videoControl">
-          <div class="instRow"><span class="bind">CLICK</span> Play/Pause</div>
-          <div class="instRow"><span class="bind">MOUSE_WHEEL</span> Seek</div>
-          <div class="instRow"><span class="bind">ESC</span> Close</div>
-        </div>
+      </div>
+      <div class="groupInst videoControl">
+        <div class="instRow"><span class="bind">CLICK</span> Play/Pause</div>
+        <div class="instRow"><span class="bind">MOUSE_WHEEL</span> Seek</div>
+        <div class="instRow"><span class="bind">ESC</span> Close</div>
       </div>
     </div>
   </div>
@@ -38,7 +37,7 @@
   function initZoom() {
     const overlay = document.getElementById("zoom-overlay") as HTMLElement;
     const zoomLevel = document.querySelector(".zoomLevel") as HTMLElement;
-    const instBoundingBox = document.querySelector(".instBound") as HTMLElement;
+    const infoRect = document.querySelector(".infoBoundRect") as HTMLElement;
     const imageSlot = document.getElementById("imgSlot") as HTMLImageElement;
     const videoSlot = document.getElementById("vidSlot") as HTMLVideoElement;
     const instructions = document.querySelector(".instructions") as HTMLElement;
@@ -149,15 +148,17 @@
       }
     });
 
-    instBoundingBox.addEventListener("mouseenter", () => {
+    infoRect.addEventListener("mouseenter", () => {
       //devConsole("bubbles Hiding instructions");
       instructions.classList.add("dismiss");
+      imgTitle.classList.add("dismiss");
     });
-    instBoundingBox.addEventListener("mouseleave", () => {
+    infoRect.addEventListener("mouseleave", () => {
       if (scale <= 1) {
         //devConsole("bubbles Showing instructions");
         instructions.classList.remove("dismiss");
       }
+      imgTitle.classList.remove("dismiss");
     });
 
     //scrollwheel video seeker
@@ -375,12 +376,12 @@
   #zoom-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(var(--baseRGB), 0.9);
+    background: rgba(var(--baseRGB), 0.8);
     display: none;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    z-index: 50;
+    z-index: 100;
     opacity: 0;
     transition: opacity 0.2s var(--sleek);
     pointer-events: none;
@@ -469,6 +470,14 @@
       font-weight: bold;
       color: var(--fore);
       min-width: 210px;
+      transition:
+        transform 0.4s var(--sleek),
+        opacity 0.2s var(--sleek);
+      &.dismiss {
+        transition-timing-function: var(--accel);
+        transform: translateX(-200%);
+        opacity: 0;
+      }
     }
 
     & .instructions {
@@ -502,8 +511,8 @@
       text-decoration: none;
       font-variation-settings: "wght" 500;
       box-shadow:
-      0 1px 4px 0 rgba(0, 0, 0, 0.14),
-      inset 0 0 4px 0 rgba(var(--foreRGB), 0.2);
+        0 1px 4px 0 rgba(0, 0, 0, 0.14),
+        inset 0 0 4px 0 rgba(var(--foreRGB), 0.2);
       &:hover {
         cursor: pointer;
         background: rgba(var(--baseRGB), 0.7);
@@ -542,5 +551,13 @@
       transform: scale(1) translateY(0);
       opacity: 1;
     }
+  }
+
+  .infoBoundRect {
+    position: fixed;
+    height: 300px;
+    width: 50%;
+    inset: 0;
+    z-index: 11;
   }
 </style>

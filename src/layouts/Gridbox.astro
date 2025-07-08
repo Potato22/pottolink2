@@ -31,6 +31,7 @@ const { id, className, deflateBottom, deflateTop } = Astro.props;
     padding: 4rem 0;
     font-family: var(--content);
     background: var(--base);
+    transition: background 0.2s var(--sleek);
     //background: red;
     @include breakpoint(tablet) {
       grid-template-columns: repeat(3, minmax(0, 1fr));

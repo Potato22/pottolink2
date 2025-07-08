@@ -35,11 +35,11 @@ body {
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--baseD);
+    background: var(--base);
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--baseSecondary);
+    background: var(--baseTertiary);
     border-radius: 10px;
 
     &:hover {
@@ -47,7 +47,7 @@ body {
     }
 
     &:active {
-      background: var(--accentSecondary);
+      background: var(--accent);
     }
   }
 }
@@ -61,6 +61,7 @@ body {
 :root {
   --base: #181818;
   --baseSecondary: #202122;
+  --baseTertiary: #393b3d;
   --fore: #ffffff;
   --foreSecondary: rgba(255, 255, 255, 0.651);
   --prim: #20a5b4;
@@ -75,10 +76,11 @@ body {
   --stop: #863a3a;
 
   //rgba( var(...) , ??)
-  --primSecondaryRGB: 27, 82, 91;
   --baseRGB: 24, 24, 24;
   --foreRGB: 255, 255, 255;
   --primRGB: 32, 165, 180;
+  --primSecondaryRGB: 27, 82, 91;
+  --accentRGB: 97, 223, 206;
   --err: 255, 92, 92;
   --ok: 47, 255, 47, ;
 
@@ -104,6 +106,8 @@ body {
 
   --acrylicBackdrop: blur(200px) brightness(2) saturate(2);
   --acrylicBackdropStrong: blur(300px) brightness(2) saturate(2);
+
+  --navHeight: 50px;
 }
 
 [data-theme=dark] {
@@ -119,6 +123,7 @@ body {
   --base: #f8f4e8;
   --baseRGB: 248, 244, 232;
   --baseSecondary: #FFFAEB;
+  --baseTertiary: #d6cebf;
   --fore: #000000;
   --foreRGB: 0, 0, 0;
   --foreSecondary: rgba(0, 0, 0, 0.774);
@@ -128,6 +133,7 @@ body {
   --primSecondary: #ffd4ad;
   --primSecondaryRGB: 255, 212, 173;
   --accent: #ff6753;
+  --accentRGB: 255, 103, 83;
   --accentSecondary: hsl(29, 100%, 65%, 5%);
   --viscueDisabled: #0000002d;
 
