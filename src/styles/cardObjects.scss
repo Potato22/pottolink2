@@ -241,11 +241,11 @@
     font-family: var(--display);
     font-weight: 500;
 
-    @include breakpoint(tablet, square) {
+    @include breakpoint(square) {
         font-size: 5rem;
     }
 
-    @include breakpoint(tiny, mobile) {
+    @include breakpoint(tiny, mobile, tablet) {
         font-size: 4rem;
     }
 }
@@ -269,12 +269,12 @@
     font-family: var(--display);
     font-weight: 900;
 
-    @include breakpoint(tablet, square) {
+    @include breakpoint(square) {
         font-size: 5rem;
         font-weight: 720;
     }
 
-    @include breakpoint(tiny, mobile) {
+    @include breakpoint(tiny, mobile, tablet) {
         font-size: 4rem;
         font-weight: 720;
     }
@@ -285,11 +285,11 @@
     font-family: var(--display);
     font-weight: 900;
 
-    @include breakpoint(tablet, square) {
+    @include breakpoint(square) {
         font-size: 7rem;
     }
 
-    @include breakpoint(tiny, mobile) {
+    @include breakpoint(tiny, mobile, tablet) {
         font-size: 3rem;
     }
 }

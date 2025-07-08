@@ -77,6 +77,7 @@ body {
   //rgba( var(...) , ??)
   --primSecondaryRGB: 27, 82, 91;
   --baseRGB: 24, 24, 24;
+  --foreRGB: 255, 255, 255;
   --primRGB: 32, 165, 180;
   --err: 255, 92, 92;
   --ok: 47, 255, 47, ;
@@ -119,6 +120,7 @@ body {
   --baseRGB: 248, 244, 232;
   --baseSecondary: #FFFAEB;
   --fore: #000000;
+  --foreRGB: 0, 0, 0;
   --foreSecondary: rgba(0, 0, 0, 0.774);
   --prim: #ffa34d;
   --primRGB: 255, 163, 77;

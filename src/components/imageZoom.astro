@@ -1,4 +1,5 @@
 <div id="zoom-overlay">
+  <div class="zoomLevel">100%</div>
   <div class="bubbles">
     <div class="topRow">
       <div class="title">jyeah</div>
@@ -36,11 +37,13 @@
 
   function initZoom() {
     const overlay = document.getElementById("zoom-overlay") as HTMLElement;
+    const zoomLevel = document.querySelector(".zoomLevel") as HTMLElement;
     const instBoundingBox = document.querySelector(".instBound") as HTMLElement;
     const imageSlot = document.getElementById("imgSlot") as HTMLImageElement;
     const videoSlot = document.getElementById("vidSlot") as HTMLVideoElement;
     const instructions = document.querySelector(".instructions") as HTMLElement;
     const imgTitle = document.querySelector(".title") as HTMLElement;
+    const bubbles = document.querySelector(".bubbles") as HTMLElement;
     const imageControls = document.querySelector(
       ".groupInst.imageControl"
     ) as HTMLElement;
@@ -54,7 +57,7 @@
     let isVideo: boolean = false;
     let isMobile: boolean = false;
 
-    if (isOnIndex === true) {
+    if (isOnIndex === (true || null || undefined)) {
       getUrlButton.style.display = "none";
     }
 
@@ -147,12 +150,12 @@
     });
 
     instBoundingBox.addEventListener("mouseenter", () => {
-      devConsole("bubbles Hiding instructions");
+      //devConsole("bubbles Hiding instructions");
       instructions.classList.add("dismiss");
     });
     instBoundingBox.addEventListener("mouseleave", () => {
       if (scale <= 1) {
-        devConsole("bubbles Showing instructions");
+        //devConsole("bubbles Showing instructions");
         instructions.classList.remove("dismiss");
       }
     });
@@ -180,16 +183,19 @@
 
       const zoomIntensity = 0.1;
       scale += e.deltaY < 0 ? zoomIntensity : -zoomIntensity;
-      scale = Math.max(0.5, Math.min(scale, 5));
+
+      //scale clamp
+      scale = Math.max(0.5, Math.min(scale, 10));
 
       updateTransform(e.clientX, e.clientY);
+      zoomLevelDisplay();
 
       // Show/hide instructions based on zoom level
       if (scale > 1) {
-        devConsole("Hiding instructions");
+        //devConsole("Hiding instructions");
         instructions.classList.add("dismiss");
       } else {
-        devConsole("Showing instructions");
+        //devConsole("Showing instructions");
         instructions.classList.remove("dismiss");
       }
     });
@@ -202,16 +208,19 @@
 
     // Close overlay
     overlay.addEventListener("click", (e) => {
+      closeHook(e);
+    });
+
+    function closeHook(e: MouseEvent) {
       if (scale <= 1) {
-        if (e.target === overlay) {
-          closeOverlay();
-        }
+        closeOverlay();
       } else {
-        scale = 1; // Reset scale on overlay click
+        scale = 1;
         instructions.classList.remove("dismiss");
         updateTransform(e.clientX, e.clientY);
+        zoomLevelDisplay();
       }
-    });
+    }
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -234,6 +243,19 @@
         overlay.style.display = "none";
         instructions.style.display = "none";
       }, 200);
+    }
+
+    let timer: number | undefined;
+
+    function zoomLevelDisplay() {
+      clearTimeout(timer);
+      zoomLevel.classList.add("show");
+      zoomLevel.textContent = `${Math.round(scale * 100)}%`;
+
+      //TIL window implies explicit browser
+      timer = window.setTimeout(() => {
+        zoomLevel.classList.remove("show");
+      }, 2000);
     }
 
     let currentTransform = { x: 0, y: 0, scale: 1 };
@@ -337,7 +359,7 @@
 
   function initSetup() {
     const currentPath = window.location.pathname;
-    if (currentPath.includes("/") || currentPath === "/") {
+    if (!currentPath.includes("gallery")) {
       isOnIndex = true;
     } else {
       isOnIndex = false;
@@ -397,7 +419,6 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 62px;
   }
   .bubbles {
     position: fixed;
@@ -411,12 +432,15 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1.2em;
-    & .instructions,
+    & .zoomLevel,
+    .instructions,
     .title,
     #getUrl {
       color: var(--fore);
       background: rgba(var(--baseRGB), 0.8);
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      box-shadow:
+        0 1px 4px 0 rgba(0, 0, 0, 0.14),
+        inset 0 0 4.6px 0 rgba(var(--foreRGB), 0.2);
       backdrop-filter: var(--acrylicBackdrop);
       padding: 10px;
       border-radius: 20px;
@@ -472,11 +496,14 @@
       width: 62px;
       padding: 0.5em;
       background: rgba(var(--baseRGB), 0.5);
-      border: 1px solid var(--fore);
+      //border: 1px solid var(--fore);
       color: var(--fore);
       transition: all 0.2s var(--sleek);
       text-decoration: none;
       font-variation-settings: "wght" 500;
+      box-shadow:
+      0 1px 4px 0 rgba(0, 0, 0, 0.14),
+      inset 0 0 4px 0 rgba(var(--foreRGB), 0.2);
       &:hover {
         cursor: pointer;
         background: rgba(var(--baseRGB), 0.7);
@@ -488,6 +515,32 @@
         background: rgba(var(--baseRGB), 0.9);
         font-variation-settings: "wght" 600;
       }
+    }
+  }
+  .zoomLevel {
+    position: absolute;
+    top: 20px;
+    display: grid;
+    place-items: center;
+    padding: 0.5em;
+    background: rgba(var(--baseRGB), 0.5);
+    box-shadow:
+      0 1px 4px 0 rgba(0, 0, 0, 0.14),
+      inset 0 0 4px 0 rgba(var(--foreRGB), 0.2);
+    backdrop-filter: var(--acrylicBackdrop);
+    color: var(--fore);
+    border-radius: 20px;
+    font-family: var(--contentSecondary);
+    z-index: 30;
+
+    transform: scale(0.9) translateY(-20px);
+    opacity: 0;
+    transition: all 0.3s var(--accel);
+
+    &.show {
+      transition-timing-function: var(--sleek);
+      transform: scale(1) translateY(0);
+      opacity: 1;
     }
   }
 </style>
