@@ -224,7 +224,7 @@ function getFlags(input: string): string[] {
         .join(" ")
         .split(" ")
         .filter((entry) => entry.startsWith("-"))
-        .map((entry) => entry.substr(1));
+        .map((entry) => entry.substring(1));
 
     GalleryState.flagsCache.set(input, flags);
     return flags;

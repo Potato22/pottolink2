@@ -1,5 +1,5 @@
 ---
-import { ClientRouter } from "astro:transitions";
+import { ClientRouter, slide } from "astro:transitions";
 import pottoCeramic from "../assets/Pottoceramic.png";
 import PersistentWindow from "../components/persistentWindow.astro";
 import QuirkyLoad from "../components/quirkyLoad.astro";
@@ -43,7 +43,7 @@ import Minitoast from "../components/utils/minitoast.astro";
     <title>Potto</title>
     <ClientRouter />
   </head>
-  <body transition:animate="none">
+  <body transition:animate={slide({ duration: ".5s" })}>
     <PersistentWindow ignoreScrollCheck/>
     <QuirkyLoad />
     <Minitoast />
