@@ -156,6 +156,7 @@
     }
 
     // nav button toggles
+    const nlogo = document.getElementById("nlogo") as HTMLElement;
     const openFilterButton = document.querySelector(
       ".openFilter"
     ) as HTMLElement;
@@ -165,6 +166,8 @@
     const backButton = document.querySelector(".backButton") as HTMLElement;
 
     if (isGalleryPage) {
+      nlogo.classList.add("backButtonPresent");
+      nlogo.setAttribute("href", "/#gall")
       openFilterButton.addEventListener("click", () => {
         filterPanelOverlay.classList.toggle("active");
       });
@@ -172,6 +175,7 @@
         filterPanelOverlay.classList.toggle("active");
       });
     } else {
+      nlogo.classList.remove("backButtonPresent");
       openFilterButton.style.display = "none";
       backButton.style.display = "none";
     }
@@ -267,6 +271,7 @@
     backdrop-filter: var(--acrylicBackdrop);
     user-select: none;
     transition: all 0.2s var(--accel);
+    height: var(--navHeight);
   }
 
   .navDormant {
@@ -287,25 +292,24 @@
     text-decoration: none;
     transition: background 0.2s var(--sleek);
 
-    &:has(.backButton) {
+    &.backButtonPresent {
       padding: 0.5em 0.5em 0.5em 0;
       border-radius: 20px;
+      &:hover {
+        background: var(--accent);
+        .backButton {
+          color: var(--base);
+        }
+        .npotto {
+          fill: var(--base);
+        }
+      }
     }
 
     .backButton {
       color: var(--fore);
       font-size: 2rem;
       transition: color 0.2s var(--sleek);
-    }
-
-    &:hover {
-      background: var(--accent);
-      .backButton {
-        color: var(--base);
-      }
-      .npotto {
-        fill: var(--base);
-      }
     }
 
     & svg {
