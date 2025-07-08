@@ -1,11 +1,26 @@
 ---
 import "../styles/cardObjects.scss";
-interface Props {
+
+type BaseProps = {
   /** Disables background */
   isInvisible?: boolean;
 
   /** Textcard */
   isTextCard?: boolean;
+
+  /** Image with a text overlay */
+  isBackgroundText?: boolean;
+
+  isLinkCard?: false;
+
+  /** If true, the card acts as a link */
+  isLink?: false;
+
+  /** URL for the link card */
+  href?: undefined;
+
+  /** If true, styles the card as a return/back link */
+  isReturnLink?: boolean;
 
   /** Card size modifier */
   size?: "tall" | "extraTall" | "big" | "wide" | "superWide" | "mediumWide";
@@ -41,36 +56,43 @@ interface Props {
     | "regRead"
     | "small";
 
-  /** If true, the card acts as a link */
-  isLink?: boolean;
-
-  /** URL for the link card */
-  href?: string;
-
-  /** If true, styles the card as a return/back link */
-  isReturnLink?: boolean;
-
   /** Image properties for the card */
   image?: {
     /** Image source URL */
     src: string;
+
     /** Alt text for the image */
     alt: string;
+
     /** Image position in the card */
     position?: "left" | "right" | "top" | "bottom" | "center";
   };
 
   /** Override with FONT NAME only */
-  fontOverrideTitle?: string;
+  styleOverride?: string;
+
+  /** Override with FONT NAME only */
   fontOverrideContent?: string;
 
   /** Add custom class */
   class?: string;
-}
+};
+
+type LinkProps = Omit<BaseProps, "isLink" | "href"> & {
+  isLink: true;
+  href: string;
+};
+type LinkCardProps = Omit<BaseProps, "isLinkCard" | "href"> & {
+  isLinkCard: true;
+  href: string;
+};
+
+type Props = BaseProps | LinkProps | LinkCardProps;
 
 const {
   isInvisible = false,
   isTextCard = false,
+  isBackgroundText = false,
   size,
   alignText = "left",
   title,
@@ -78,10 +100,11 @@ const {
   content,
   contentSize = "regRead",
   isLink = false,
+  isLinkCard = false,
   href,
   isReturnLink = false,
   image,
-  fontOverrideTitle,
+  styleOverride,
   fontOverrideContent,
   class: className,
 } = Astro.props;
@@ -110,7 +133,6 @@ const cardClasses = [
     }[size],
   isLink,
   isReturnLink && "linkreturn",
-  fontOverrideTitle,
   fontOverrideContent,
   className,
 ]
@@ -125,7 +147,19 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
 ---
 
 {
-  isLink ? (
+  isLinkCard ? (
+    <a target="_blank" href={href} class={`cards linkcard ${className ?? ""}`}>
+      <div class="textcard invis bigger col">
+        <b>{title ?? "?"}</b>
+        <svg class="customarrow" viewBox="0 0 10 10">
+          <g>
+            <path class="line" d="M0 5h7" />
+            <path class="arrow" d="M1 1l4 4-4 4" />
+          </g>
+        </svg>
+      </div>
+    </a>
+  ) : isLink || isBackgroundText ? (
     <div class={`${cardClasses} backgroundtext`}>
       {image && (
         <img
@@ -146,25 +180,30 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
             )}
             {content && (
               <div
-                style={{ textAlign: alignText }}
+                style={{
+                  textAlign: alignText,
+                  fontFamily: fontOverrideContent,
+                }}
                 class={contentClasses}
                 set:html={content}
               />
             )}
             <slot />
           </div>
-          <div class="buttonalign">
-            <a href={href}>
-              <div class="go">
-                <svg class="dynamicarrow" viewBox="0 0 10 10">
-                  <g>
-                    <path class="line" d="M0 5h7" />
-                    <path class="arrow" d="M1 1l4 4-4 4" />
-                  </g>
-                </svg>
-              </div>
-            </a>
-          </div>
+          {isLink && (
+            <div class="buttonalign">
+              <a href={href}>
+                <div class="go">
+                  <svg class="dynamicarrow" viewBox="0 0 10 10">
+                    <g>
+                      <path class="line" d="M0 5h7" />
+                      <path class="arrow" d="M1 1l4 4-4 4" />
+                    </g>
+                  </svg>
+                </div>
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -180,7 +219,7 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
       {/* if title AND parameter input exists */}
       {title && (
         <div
-          style={{ textAlign: alignText, fontFamily: fontOverrideTitle }}
+          style={{ textAlign: alignText }}
           class={titleClasses}
           set:html={title}
         />

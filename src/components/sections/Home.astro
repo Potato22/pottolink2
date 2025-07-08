@@ -105,30 +105,180 @@ import MediaCard from "../MediaCard.astro";
     </div>
   </a>
 
+  <Gridbox deflateBottom id="comm">
+    <CardObject
+      isTextCard
+      size="superWide"
+      title="Commissions."
+      titleSize="mediumWide"
+      content="<i>::Preview and past orders</i>"
+      contentSize="small"
+      fontOverrideContent="var(--contentSecondary)"
+      isInvisible
+    />
+  </Gridbox>
+
   <Gridbox>
+    <CardObject
+      isBackgroundText
+      image={{
+        src: "/imgs/showcase/sb3.jpg",
+        alt: "Sketchbook Preview",
+        position: "left",
+      }}
+      title="Sketchbook"
+      titleSize="regRead"
+      content=`
+      <i>starts from...</i> <b>€10-15/sketch</b>
+      `
+      styleOverride="font-family: var(--content);"
+    />
+    <CardObject
+      isBackgroundText
+      image={{
+        src: "/imgs/showcase/portrait1.jpg",
+        alt: "Portrait Preview",
+        position: "right",
+      }}
+      title="Portrait"
+      titleSize="regRead"
+      content=`
+      <i>starts from...</i> <b>€15-45</b>
+      `
+      styleOverride="font-family: var(--content);"
+    />
+    <CardObject
+      isBackgroundText
+      image={{
+        src: "/imgs/showcase/fullbod3.jpg",
+        alt: "Fullbody Preview",
+        position: "right",
+      }}
+      title="Fullbody"
+      titleSize="regRead"
+      content=`
+      <i>starts from...</i> <b>€25-60</b>
+      `
+      styleOverride="font-family: var(--content);"
+    />
     <MediaCard
+      image={{
+        src: "/imgs/grow.jpg",
+        alt: "Just",
+        position: "center",
+      }}
+    />
+    <MediaCard
+      image={{
+        src: "/imgs/prod_sb.jpg",
+        alt: "Just",
+        position: "center",
+      }}
+    />
+    <MediaCard
+      image={{
+        src: "/imgs/showcase/fullbod1.jpg",
+        alt: "Just",
+        position: "right",
+      }}
+      size="mediumWide"
+    />
+    <CardObject isLinkCard href="commission.pottoart.uk" title="Order one" />
+  </Gridbox>
+
+  <Gridbox deflateBottom id="Trivia">
+    <CardObject
+      isTextCard
+      size="superWide"
+      title="Trivia."
+      titleSize="mediumWide"
+      content="<i>::Things?</i>"
+      contentSize="small"
+      fontOverrideContent="var(--contentSecondary)"
+      isInvisible
+    />
+  </Gridbox>
+
+  <Gridbox id="trivia">
+    <MediaCard
+      video={{
+        src: "/ceramic.webm",
+        alt: "rat",
+        volume: 0.2,
+      }}
+    />
+    <CardObject
+      isTextCard
+      title="Who?"
+      titleSize="mediumWide"
+      content=`
+    Hello, Potto here. Firstly, I appreciate your time to check this "hub"! I consider myself a hobbyist artist who draws pretty ponies in a pretty environment out of sheer enjoyment. I don't look forward into the My Little Pony fandom that much, rather I just enjoy doing just the ponies (primarily Original Characters). Although I do enjoy doing other things too. Either that's 3D work, sound/music and webdev.
+    `
+      size="wide"
+    />
+  </Gridbox>
+
+  <Gridbox>
+    <CardObject
       image={{
         src: "/content/illus/artist.jpg",
         alt: "Artist mary",
         position: "center",
       }}
+      size="tall"
     />
-    <MediaCard
+    <CardObject
+      isTextCard
+      size="wide"
+      title="Oulie Mareota"
+      titleSize="mediumWide"
+      content="You have most likely seen this girl, if anything, there's a concerning amount of her appearance in every each of my works. Nicknamed Mary, existed since as early as 2017."
+      contentSize="reg"
+      isInvisible
+    />
+    <CardObject
+      isBackgroundText
       image={{
-        src: "/content/illus/secondmonth.jpg",
-        alt: "lorem ipsum dolor sit amet consectetur adipiscing elit",
-        position: "center",
+        src: "/imgs/grow.jpg",
+        alt: "Sketchbook Preview",
+        position: "left",
       }}
+      content="She is an extension of my self-expression. She is a part of me but she's an entity by herself."
+      styleOverride="font-family: var(--content);"
+      size="wide"
     />
+    <CardObject
+      isTextCard
+      size="mediumWide"
+      content="Mary is a pegasus who barely ever flies, she appreciates walking a lot more than flying. She spends a lot of time in her bedroom, a lot. She loves pillows and probably is one herself."
+      contentSize="reg"
+      isInvisible
+    />
+    <CardObject
+      image={{
+        src: "/imgs/doodle8.jpg",
+        alt: "Sketchbook Preview",
+        position: "left",
+      }}
+      styleOverride="font-family: var(--content);"
+      size="mediumWide"
+    />
+  </Gridbox>
+
+  <Gridbox>
     <MediaCard
       video={{
         src: "/content/modesig/rat.mp4",
-        alt: "rat",
-        volume: .2
+        alt: "still wip, go rat",
+        volume: .5
       }}
     />
   </Gridbox>
 </div>
+
+<script>
+  window.scrollTo(0, 9021364);
+</script>
 
 <style lang="scss">
   @use "../../../src/styles/_mixins" as *;
