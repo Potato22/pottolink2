@@ -108,9 +108,9 @@
 
     function navDisplayMode() {
       if (!nav) return;
-      if (!isGalleryPage && window.scrollY > winH) {
+      if (!isGalleryPage && window.scrollY > (winH / 1.2)) {
         nav.classList.remove("navDormant");
-      } else if (isGalleryPage && window.scrollY > 40) {
+      } else if (isGalleryPage) {
         nav.classList.remove("navDormant");
       } else {
         nav.classList.add("navDormant");
@@ -260,7 +260,8 @@
   @use "../styles/mixins" as *;
 
   .dynamicnav {
-    position: sticky;
+    width: 100vw;
+    position: fixed;
     top: 0;
     display: flex;
     justify-content: space-between;
@@ -270,13 +271,14 @@
     background: rgba(var(--baseRGB), 0.7);
     backdrop-filter: var(--acrylicBackdrop);
     user-select: none;
-    transition: all 0.2s var(--accel);
+    transition: all 0.2s var(--sleek);
     height: var(--navHeight);
   }
 
   .navDormant {
     background: var(--base);
-    transition: all 0.2s var(--sleek);
+    transition-timing-function: var(--accel);
+    transform: translateY(calc(var(--navHeight) * -1));
   }
 
   .navHide {

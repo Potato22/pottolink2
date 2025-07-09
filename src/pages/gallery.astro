@@ -1,10 +1,6 @@
 ---
 import Default from "../layouts/default.astro";
-import ImageZoom from "../components/imageZoom.astro";
-import ScreenPrompt from "../components/screenPrompt.astro";
 import GalleryBox from "../components/sections/GalleryBox.astro";
-import DynamicNav from "../components/dynamicNav.astro";
-import BackButton from "../components/utils/backButton.astro";
 
 import "../styles/root.scss";
 
@@ -13,10 +9,6 @@ import "../styles/root.scss";
 ---
 
 <Default>
-  <ScreenPrompt />
-  <ImageZoom />
-  <BackButton />
-  <DynamicNav transition:persist/>
   <GalleryBox />
 </Default>
 

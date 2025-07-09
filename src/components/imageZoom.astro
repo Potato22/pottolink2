@@ -82,15 +82,11 @@
             : 0.8;
           videoSlot.dataset.alt = media.dataset.title || "";
           imgTitle.textContent = media.dataset.title || "?";
-          overlay.style.display = "flex";
-          overlay.style.cursor = "auto";
-
+          openOverlay();
           setTimeout(() => {
-            overlay.classList.add("active");
-            setTimeout(() => {
-              videoSlot.classList.add("active");
-            }, 100);
-          }, 1);
+            videoSlot.classList.add("active");
+          }, 100);
+          overlay.style.cursor = "auto";
           scale = 1;
 
           videoSlot.onloadedmetadata = () => {
@@ -114,13 +110,11 @@
             `Image zooming: ${imageSlot.src} (${imageSlot.dataset.alt})
             Lossless URL: ${imageSlot.dataset.losslessURL}`
           );
-          overlay.style.display = "flex";
+          openOverlay();
+
           setTimeout(() => {
-            overlay.classList.add("active");
-            setTimeout(() => {
-              imageSlot.classList.add("active");
-            }, 100);
-          }, 1);
+            imageSlot.classList.add("active");
+          }, 100);
           scale = 1;
 
           imageSlot.onload = () => {
@@ -229,6 +223,13 @@
       }
     });
 
+    function openOverlay() {
+      overlay.style.display = "flex";
+      setTimeout(() => overlay.classList.add("active"), 1);
+      // Push a new state so back button can close overlay
+      history.pushState({ zoomOverlay: true }, "");
+    }
+
     function closeOverlay() {
       overlay.classList.remove("active");
       devConsole("closeOverlay() Hiding instructions");
@@ -243,6 +244,12 @@
       setTimeout(() => {
         overlay.style.display = "none";
         instructions.style.display = "none";
+
+        devConsole(history.state.zoomOverlay)
+
+        if (history.state && history.state.zoomOverlay) {
+          history.back();
+        }
       }, 200);
     }
 
