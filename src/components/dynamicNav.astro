@@ -24,11 +24,11 @@
 
 <div class="filterPanelOverlay">
   <div class="filterPanel">
-    <label class="filterToggleObject ftObj_NSFW">
-      <input type="checkbox" id="nsfwFTT" class="filterCheckbox" />
+    <label class="filterToggleObject ftObj_Versioning">
+      <input type="checkbox" id="versioningFTT" class="filterCheckbox" />
       <div class="filterAttributes">
-        <div class="filterIcon material-symbols-rounded">explicit</div>
-        <div class="filterName">Explicit</div>
+        <div class="filterIcon material-symbols-rounded">difference</div>
+        <div class="filterName">Versioning</div>
       </div>
       <div class="filterSwitchCont">
         <div class="pill">
@@ -48,11 +48,11 @@
         </div>
       </div>
     </label>
-    <label class="filterToggleObject ftObj_Versioning">
-      <input type="checkbox" id="versioningFTT" class="filterCheckbox" />
+    <label class="filterToggleObject ftObj_NSFW">
+      <input type="checkbox" id="nsfwFTT" class="filterCheckbox" />
       <div class="filterAttributes">
-        <div class="filterIcon material-symbols-rounded">difference</div>
-        <div class="filterName">Versioning</div>
+        <div class="filterIcon material-symbols-rounded">explicit</div>
+        <div class="filterName">Explicit</div>
       </div>
       <div class="filterSwitchCont">
         <div class="pill">
@@ -108,7 +108,7 @@
 
     function navDisplayMode() {
       if (!nav) return;
-      if (!isGalleryPage && window.scrollY > (winH / 1.2)) {
+      if (!isGalleryPage && window.scrollY > winH / 1.2) {
         nav.classList.remove("navDormant");
       } else if (isGalleryPage) {
         nav.classList.remove("navDormant");
@@ -167,7 +167,7 @@
 
     if (isGalleryPage) {
       nlogo.classList.add("backButtonPresent");
-      nlogo.setAttribute("href", "/#gall")
+      nlogo.setAttribute("href", "/#gall");
       openFilterButton.addEventListener("click", () => {
         filterPanelOverlay.classList.toggle("active");
       });

@@ -1,4 +1,5 @@
 import { reloadGallery } from "./b2GalleryLogic";
+import { devConsole } from "./utils/devConsole";
 let isGalleryPage = false;
 
 function filterLogic() {
@@ -62,8 +63,11 @@ function filterLogic() {
                     break;
             }
         }
-        console.log("which: ", whichSwitch, "(displayed:", target.checked, ")")
-        //checkGlobal()
+        // if (dataNSFW === "hidden" || dataSketch === "hidden" || dataVersion === "hidden") {
+        //     alert('bruih')
+        //     //setDefaultFallback();
+        // }
+        devConsole("which: ", whichSwitch, "(displayed:", target.checked, ")")
 
         invokeReload();
     }
@@ -77,9 +81,9 @@ function filterLogic() {
         if (sketchSwitch) sketchSwitch.checked = true;
         localStorage.setItem("filterSketch", "displayed");
 
-        fO_Versioning?.classList.add('FTon');
-        if (versioningSwitch) versioningSwitch.checked = true;
-        localStorage.setItem("filterVersion", "displayed");
+        fO_Versioning?.classList.remove('FTon');
+        if (versioningSwitch) versioningSwitch.checked = false;
+        localStorage.setItem("filterVersion", "hidden");
     }
 
     if (dataNSFW === null || dataSketch === null || dataVersion === null) {
@@ -87,7 +91,7 @@ function filterLogic() {
     } else {
         //checkGlobal();
         if ([dataNSFW, dataSketch, dataVersion].every(variable => variable === "hidden")) {
-            setDefaultFallback();
+            //setDefaultFallback();
         } else {
             if (dataNSFW === "displayed") {
                 if (nsfwSwitch) nsfwSwitch.checked = true;
