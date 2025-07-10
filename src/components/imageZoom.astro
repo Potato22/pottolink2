@@ -229,7 +229,6 @@
       // Push a new state so back button can close overlay
 
       if (!isMobile) return //MOBILE ONLY
-      alert('aa')
       history.pushState({ zoomOverlay: true }, "");
     }
 
@@ -251,7 +250,6 @@
         devConsole(history.state.zoomOverlay)
 
         if (isMobile && history.state && history.state.zoomOverlay) {
-          alert('bb')
           history.back();
         }
       }, 200);
