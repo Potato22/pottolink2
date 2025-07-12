@@ -29,8 +29,8 @@
 </div>
 
 <script>
-  import { devConsole } from "./utils/devConsole";
-  import { pushToast } from "./utils/miniToastLogic";
+  import { devConsole } from "./devConsole";
+  import { pushToast } from "./miniToastLogic";
 
   let isOnIndex: boolean;
 
@@ -228,8 +228,8 @@
       setTimeout(() => overlay.classList.add("active"), 1);
       // Push a new state so back button can close overlay
 
-      if (!isMobile) return //MOBILE ONLY
-      history.pushState({ zoomOverlay: true }, "");
+      // if (!isMobile) return //MOBILE ONLY
+      // history.pushState({ zoomOverlay: true }, "");
     }
 
     function closeOverlay() {
@@ -247,11 +247,11 @@
         overlay.style.display = "none";
         instructions.style.display = "none";
 
-        devConsole(history.state.zoomOverlay)
+        // devConsole(history.state.zoomOverlay)
 
-        if (isMobile && history.state && history.state.zoomOverlay) {
-          history.back();
-        }
+        // if (isMobile && history.state && history.state.zoomOverlay) {
+        //   history.back();
+        // }
       }, 200);
     }
 

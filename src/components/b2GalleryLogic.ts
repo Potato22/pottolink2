@@ -293,6 +293,7 @@ export function reloadGallery(): void {
     filterManager.refreshFilters(); // Ensure filters are up-to-date
     const galleryGrid = document.getElementById("galleryGrid");
     devConsole("Reloading gallery with raw data length:", galleryRawData.length);
+    //devConsole(galleryRawData);
     if (!galleryRawData.length) return;
     devConsole("Clearing gallery state and grid...");
     GalleryState.allDisplayImages.length = 0;
