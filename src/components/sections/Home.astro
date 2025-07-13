@@ -80,7 +80,7 @@ import MediaCard from "../MediaCard.astro";
   <Gridbox deflateBottom id="gall">
     <CardObject
       isTextCard
-      size="superWide"
+      size="wide"
       title="Gallery."
       titleSize="mediumWide"
       content="<i>::Latest few works.</i>"
@@ -88,6 +88,7 @@ import MediaCard from "../MediaCard.astro";
       fontOverrideContent="var(--contentSecondary)"
       isInvisible
     />
+    <CardObject isLinkCard href="./gallery" href_target="_self" title="Take me there" />
   </Gridbox>
 
   <B2GalleryIndex />
@@ -178,7 +179,7 @@ import MediaCard from "../MediaCard.astro";
     <MediaCard
       image={{
         src: "/imgs/showcase/fullbod1.jpg",
-        alt: "Mary on rooftop",
+        alt: "Hitch and Zipp in an abandoned pegasi station",
         position: "right",
       }}
       size="mediumWide"
