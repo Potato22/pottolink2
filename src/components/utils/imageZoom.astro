@@ -3,9 +3,14 @@
   <div class="zoomLevel">100%</div>
   <div class="bubbles">
     <div class="topRow">
-      <div class="title">jyeah</div>
-      <div id="getUrl" title="Get URL" class="material-symbols-rounded">
-        link
+      <div class="title">?</div>
+      <div class="cornerButtons">
+        <div id="getFile" title="Download" class="material-symbols-rounded">
+          download
+        </div>
+        <div id="getUrl" title="Get URL" class="material-symbols-rounded">
+          link
+        </div>
       </div>
     </div>
     <div class="instructions dismiss">
@@ -50,6 +55,7 @@
       ".groupInst.videoControl"
     ) as HTMLElement;
     const getUrlButton = document.getElementById("getUrl") as HTMLElement;
+    const getFileButton = document.getElementById("getFile") as HTMLElement;
 
     let scale = 1;
     let originalImageRect: DOMRect | null = null;
@@ -58,6 +64,7 @@
 
     if (isOnIndex === (true || null || undefined)) {
       getUrlButton.style.display = "none";
+      getFileButton.style.display = "none";
     }
 
     // Use event delegation for dynamically added images
@@ -365,6 +372,22 @@
         });
       }
     });
+
+    getFileButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (isVideo) {
+        return // nah
+      } else {
+        const imgSrc = imageSlot.dataset.losslessURL || imageSlot.src;
+        const link = document.createElement("a");
+        link.target = "_blank";
+        link.href = imgSrc;
+        link.download = imgSrc.split("/").pop() || "image.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    });
   }
 
   function initSetup() {
@@ -429,6 +452,12 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    gap: 1em;
+  }
+
+  .cornerButtons {
+    display: flex;
+    gap: 1em;
   }
   .bubbles {
     position: fixed;
@@ -445,7 +474,7 @@
     & .zoomLevel,
     .instructions,
     .title,
-    #getUrl {
+    #getUrl, #getFile {
       color: var(--fore);
       background: rgba(var(--baseRGB), 0.8);
       box-shadow:
@@ -507,7 +536,7 @@
       }
     }
 
-    #getUrl {
+    #getUrl, #getFile {
       display: grid;
       place-items: center;
       height: 62px;

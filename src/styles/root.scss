@@ -284,13 +284,15 @@ hr {
   }
 }
 
-.tosPageLink {
-  font-family: var(--display), sans-serif;
-  color: var(--accent) !important;
-  margin-bottom: .5em;
+.interactive {
+  cursor: pointer;
+
+  transition: transform .2s var(--bounce);
+  user-select: none;
 
   &:hover {
-    text-decoration: underline !important;
+    transition-timing-function: var(--sleek);
+    transform: scale(1.02);
   }
 }
 
