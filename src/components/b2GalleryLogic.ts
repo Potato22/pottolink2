@@ -31,7 +31,7 @@ const GalleryState: GalleryStateType = {
 
 class FilterManager {
     filters: { nsfw: boolean; sketch: boolean; version: boolean };
-    
+
     constructor() {
         this.filters = {
             nsfw: localStorage.getItem("filterNSFW") !== "displayed",
@@ -116,7 +116,7 @@ class ImageLoader {
         this.sentinel = document.createElement("div");
         this.sentinel.id = "scroll-sentinel";
         this.sentinel.style.height = "1px";
-        
+
         const galleryGrid = document.getElementById("galleryGrid");
         if (galleryGrid) {
             galleryGrid.after(this.sentinel);
@@ -143,7 +143,7 @@ class ImageLoader {
         const initialBatch = 16;
         this.renderImages(0, Math.min(initialBatch, GalleryState.allDisplayImages.length));
         this.currentIndex = Math.min(initialBatch, GalleryState.allDisplayImages.length);
-        
+
         if (this.currentIndex < GalleryState.allDisplayImages.length) {
             this.createSentinel();
         } else {
@@ -217,7 +217,7 @@ class ImageLoader {
 
         container.appendChild(img);
         this.lazyLoadObserver?.observe(img);
-        
+
         return container;
     }
 
@@ -382,18 +382,18 @@ class GalleryManager {
 
     async initialize(): Promise<void> {
         const loadingIndicator = document.querySelector(".galleryLoadingInd") as HTMLElement | null;
-        
+
         try {
             const data = await fetchDisplay();
             if (!data) return;
-            
+
             this.rawData = data;
             this.reload();
-            
+
             if (loadingIndicator) loadingIndicator.style.display = "none";
             const loadMoreButton = document.getElementById("loadMore") as HTMLButtonElement | null;
             if (loadMoreButton) loadMoreButton.style.display = "block";
-            
+
         } catch (error) {
             console.error("Initialization failed:", error);
             if (loadingIndicator) {
@@ -409,22 +409,22 @@ class GalleryManager {
 
     reload(): void {
         devConsole("Reloading gallery with raw data length:", this.rawData.length);
-        
+
         if (!this.rawData.length) return;
-        
+
         // Clean up existing loader
         if (this.imageLoader) {
             this.imageLoader.destroy();
         }
-        
+
         // Clear gallery grid
         const galleryGrid = document.getElementById("galleryGrid");
         galleryGrid?.replaceChildren();
-        
+
         // Refresh filters and process images
         this.filterManager.refreshFilters();
         processImages(this.rawData, this.filterManager);
-        
+
         // Create new loader and load initial images
         this.imageLoader = new ImageLoader(8);
         this.imageLoader.loadInitialImages();

@@ -123,7 +123,7 @@ function filterLogic() {
     function invokeReload() {
         refreshIndicator?.style.setProperty("display", "flex");
         progBar?.classList.remove("start");
-        window.scrollTo(0, 0)
+        //window.scrollTo(0, 0)
         setTimeout(() => {
             progBar?.classList.add("start");
             refreshIndicator?.classList.add("show");
