@@ -40,7 +40,7 @@ const heroImages = [
   </div>
 </div>
 
-<a href="#menu">
+<a href="#about">
   <div class="forwarder" id="forwarder">
     <div class="arrowClip" id="arrowClip">
       <div class=`arrow material-symbols-rounded`>arrow_downward</div>
@@ -85,21 +85,8 @@ const heroImages = [
   window.addEventListener("scroll", heroTransition);
   heroTransition();
 
-  function forwarder() {
-    document
-      .querySelector('a[href="#menu"]')
-      ?.addEventListener("click", (e) => {
-        e.preventDefault();
-        document.querySelector("#menu")?.scrollIntoView({
-          behavior: "smooth",
-        });
-      });
-  }
-  forwarder();
-
   document.addEventListener("astro:before-swap", () => {
     heroTransition();
-    forwarder();
   });
 </script>
 
