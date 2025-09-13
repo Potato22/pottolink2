@@ -256,6 +256,22 @@ hr {
   color: var(--fore);
 }
 
+.tosPageLink {
+  font-family: var(--content), sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 0.5em;
+
+  a {
+    color: var(--accent);
+
+    &:hover {
+      color: var(--fore);
+    }
+  }
+}
+
 .messageend {
   font-family: var(--contentSecondary), sans-serif;
   font-style: italic;
