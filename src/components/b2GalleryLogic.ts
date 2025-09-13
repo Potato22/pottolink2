@@ -31,6 +31,7 @@ const GalleryState: GalleryStateType = {
 
 class FilterManager {
     filters: { nsfw: boolean; sketch: boolean; version: boolean };
+    
     constructor() {
         this.filters = {
             nsfw: localStorage.getItem("filterNSFW") !== "displayed",
@@ -65,128 +66,139 @@ class FilterManager {
 }
 
 class ImageLoader {
-    start: number;
-    batchSize: number;
-    loading: boolean;
-    constructor(batchSize = 2) {
-        this.start = 16;
+    private currentIndex: number = 0;
+    private readonly batchSize: number;
+    private loading: boolean = false;
+    private intersectionObserver: IntersectionObserver | null = null;
+    private lazyLoadObserver: IntersectionObserver | null = null;
+    private sentinel: HTMLElement | null = null;
+    private isDestroyed: boolean = false;
+
+    constructor(batchSize = 8) {
         this.batchSize = batchSize;
-        this.loading = false;
-        this.setupInfiniteScroll();
+        this.setupObservers();
     }
 
-    setupInfiniteScroll(): void {
-        const sentinel = document.createElement("div");
-        sentinel.id = "scroll-sentinel";
-        sentinel.style.height = "1px";
-        const galleryGrid = document.getElementById("galleryGrid");
-        if (galleryGrid) {
-            galleryGrid.after(sentinel);
-        }
-
-        const observer = new IntersectionObserver(
+    private setupObservers(): void {
+        // Observer for infinite scroll
+        this.intersectionObserver = new IntersectionObserver(
             (entries) => {
+                if (this.isDestroyed) return;
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && !this.loading) {
                         this.loadMoreImages();
                     }
                 });
             },
-            {
-                rootMargin: "200px",
-            }
+            { rootMargin: "200px" }
         );
 
-        observer.observe(sentinel);
+        // Observer for lazy loading images
+        this.lazyLoadObserver = new IntersectionObserver(
+            (entries) => {
+                if (this.isDestroyed) return;
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target as HTMLImageElement;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            delete img.dataset.src;
+                            this.lazyLoadObserver!.unobserve(img);
+                        }
+                    }
+                });
+            },
+            { rootMargin: "50px" }
+        );
     }
 
-    async loadMoreImages(): Promise<void> {
-        if (this.loading || this.start >= GalleryState.allDisplayImages.length) {
+    private createSentinel(): void {
+        this.sentinel = document.createElement("div");
+        this.sentinel.id = "scroll-sentinel";
+        this.sentinel.style.height = "1px";
+        
+        const galleryGrid = document.getElementById("galleryGrid");
+        if (galleryGrid) {
+            galleryGrid.after(this.sentinel);
+            this.intersectionObserver?.observe(this.sentinel);
+        }
+    }
+
+    reset(): void {
+        this.currentIndex = 0;
+        this.loading = false;
+        this.removeSentinel();
+        this.createSentinel();
+    }
+
+    private removeSentinel(): void {
+        if (this.sentinel) {
+            this.intersectionObserver?.unobserve(this.sentinel);
+            this.sentinel.remove();
+            this.sentinel = null;
+        }
+    }
+
+    loadInitialImages(): void {
+        const initialBatch = 16;
+        this.renderImages(0, Math.min(initialBatch, GalleryState.allDisplayImages.length));
+        this.currentIndex = Math.min(initialBatch, GalleryState.allDisplayImages.length);
+        
+        if (this.currentIndex < GalleryState.allDisplayImages.length) {
+            this.createSentinel();
+        } else {
+            this.disableLoader();
+        }
+    }
+
+    private async loadMoreImages(): Promise<void> {
+        if (this.loading || this.currentIndex >= GalleryState.allDisplayImages.length || this.isDestroyed) {
             return;
         }
 
         this.loading = true;
-        const loadMoreButton = document.getElementById(
-            "loadMore"
-        ) as HTMLButtonElement | null;
-        if (loadMoreButton) {
-            loadMoreButton.textContent = "Pulling more shite";
-        }
+        this.updateLoadMoreButton("Pulling more shite");
 
-        const end = Math.min(
-            this.start + this.batchSize,
+        const endIndex = Math.min(
+            this.currentIndex + this.batchSize,
             GalleryState.allDisplayImages.length
         );
 
         try {
-            loadImages(this.start, end);
-            this.start = end;
+            this.renderImages(this.currentIndex, endIndex);
+            this.currentIndex = endIndex;
 
-            if (end >= GalleryState.allDisplayImages.length) {
+            if (this.currentIndex >= GalleryState.allDisplayImages.length) {
                 this.disableLoader();
             }
         } finally {
             this.loading = false;
-            if (loadMoreButton) {
-                loadMoreButton.innerHTML =
-                    "You've reached the end..!<br><code>earliest index: 29 November 2020</code>";
-                loadMoreButton.style.border = "none";
-            }
         }
     }
 
-    disableLoader(): void {
-        const loadMoreButton = document.getElementById(
-            "loadMore"
-        ) as HTMLButtonElement | null;
-        const titleElement = document.querySelector(
-            ".wideGoTitle"
-        ) as HTMLElement | null;
-        const sentinel = document.getElementById("scroll-sentinel");
+    private renderImages(start: number, end: number): void {
+        if (this.isDestroyed) return;
 
-        if (titleElement) {
-            titleElement.textContent = "Nothing left to load...";
-        }
+        const galleryGrid = document.getElementById("galleryGrid");
+        if (!galleryGrid) return;
 
-        if (loadMoreButton) {
-            loadMoreButton.style.pointerEvents = "none";
-            loadMoreButton.classList.add("fade-out");
-        }
+        const fragment = document.createDocumentFragment();
+        const imagesToRender = GalleryState.allDisplayImages.slice(start, end);
 
-        if (sentinel) {
-            sentinel.remove();
-        }
-    }
-}
-
-function loadImages(start: number, end: number): void {
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                const img = entry.target as HTMLImageElement;
-                if (img.dataset.src) {
-                    img.src = img.dataset.src;
-                    delete img.dataset.src;
-                    observer.unobserve(img);
-                }
-            }
+        imagesToRender.forEach((item) => {
+            const container = this.createImageContainer(item);
+            fragment.appendChild(container);
         });
-    });
 
-    const displayCount = GalleryState.allDisplayImages.slice(start, end);
-    const latestWorkGrid = document.getElementById("galleryGrid");
-    if (!latestWorkGrid) return;
-    const imgDataFragment = document.createDocumentFragment();
+        galleryGrid.appendChild(fragment);
+    }
 
-    displayCount.forEach((item) => {
+    private createImageContainer(item: DisplayImage): HTMLElement {
         const container = document.createElement("div");
         container.className = "image-container";
 
         const img = new Image();
-        //img.setAttribute("data-aos", "zoom-in");
         img.className = "interactive imgs relative cards imgcard b2Imgs";
-        //img.setAttribute("orbReact", "true");
-
         img.dataset.src = item.urlLossy;
         img.alt = item.nameLossy;
         img.dataset.title = item.nameLossy;
@@ -201,16 +213,47 @@ function loadImages(start: number, end: number): void {
         const matchingLossless = GalleryState.losslessImages.find(
             (x) => x.nameLossless === item.nameLossy
         );
-        img.dataset.lossless = matchingLossless
-            ? matchingLossless.urlLossless
-            : "false";
+        img.dataset.lossless = matchingLossless ? matchingLossless.urlLossless : "false";
 
         container.appendChild(img);
-        imgDataFragment.appendChild(container);
-        imageObserver.observe(img);
-    });
+        this.lazyLoadObserver?.observe(img);
+        
+        return container;
+    }
 
-    latestWorkGrid.appendChild(imgDataFragment);
+    private updateLoadMoreButton(text: string): void {
+        const loadMoreButton = document.getElementById("loadMore") as HTMLButtonElement | null;
+        if (loadMoreButton) {
+            loadMoreButton.textContent = text;
+        }
+    }
+
+    private disableLoader(): void {
+        const loadMoreButton = document.getElementById("loadMore") as HTMLButtonElement | null;
+        const titleElement = document.querySelector(".wideGoTitle") as HTMLElement | null;
+
+        if (titleElement) {
+            titleElement.textContent = "Nothing left to load...";
+        }
+
+        if (loadMoreButton) {
+            loadMoreButton.innerHTML = "You've reached the end..!<br><code>earliest index: 29 November 2020</code>";
+            loadMoreButton.style.border = "none";
+            loadMoreButton.style.pointerEvents = "none";
+            loadMoreButton.classList.add("fade-out");
+        }
+
+        this.removeSentinel();
+    }
+
+    destroy(): void {
+        this.isDestroyed = true;
+        this.intersectionObserver?.disconnect();
+        this.lazyLoadObserver?.disconnect();
+        this.removeSentinel();
+        this.intersectionObserver = null;
+        this.lazyLoadObserver = null;
+    }
 }
 
 // Helper functions
@@ -234,20 +277,13 @@ function hasExtraFlags(imgsFilename: string): boolean {
     const flags = getFlags(imgsFilename);
     if (flags.length === 0) return false;
     if (flags.length === 1 && flags.includes("sfw")) return false;
-    if (
-        flags.includes("0") ||
-        flags.includes("default") ||
-        flags.includes("origin")
-    )
-        return false;
+    if (flags.includes("0") || flags.includes("default") || flags.includes("origin")) return false;
     return true;
 }
 
 // API fetching
 async function fetchDisplay(): Promise<any[]> {
-    const loadingIndicator = document.querySelector(
-        ".galleryLoadingInd"
-    ) as HTMLElement | null;
+    const loadingIndicator = document.querySelector(".galleryLoadingInd") as HTMLElement | null;
 
     try {
         if (loadingIndicator) {
@@ -284,41 +320,19 @@ async function fetchDisplay(): Promise<any[]> {
     }
 }
 
-// Store the raw fetched data for reuse
-let galleryRawData: any[] = [];
-
-// Exportable reload helper for internal use (no args)
-export function reloadGallery(): void {
-    new ImageLoader(8)
-    filterManager.refreshFilters(); // Ensure filters are up-to-date
-    const galleryGrid = document.getElementById("galleryGrid");
-    devConsole("Reloading gallery with raw data length:", galleryRawData.length);
-    //devConsole(galleryRawData);
-    if (!galleryRawData.length) return;
-    devConsole("Clearing gallery state and grid...");
+function processImages(data: any[], filterManager: FilterManager): void {
+    // Clear existing state
     GalleryState.allDisplayImages.length = 0;
     GalleryState.losslessImages.length = 0;
-    galleryGrid?.replaceChildren();
-    // Optionally clear other caches if needed
-    // GalleryState.flagsCache.clear();
-    // GalleryState.imageMetadata = new WeakMap<object, any>();
-    processImages(galleryRawData);
-    loadImages(0, 16);
-}
 
-// Move processImages to top-level for reuse
-export function processImages(data: any[]): void {
     data.forEach((item) => {
-        if (
-            item.contentType &&
-            typeof item.contentType === "string" &&
-            item.contentType.includes("image/")
-        ) {
+        if (item.contentType?.includes?.("image/")) {
             if (item.name.includes("display/")) {
                 const isSketch = item.url.includes("sketch");
                 const isNSFW = item.url.includes("nsfw");
                 const hasVersioning = hasExtraFlags(item.name);
 
+                // Apply filters during processing
                 if (
                     (!filterManager.filters.nsfw || !isNSFW) &&
                     (!filterManager.filters.version || !hasVersioning) &&
@@ -350,49 +364,96 @@ export function processImages(data: any[]): void {
         }
     });
 
+    // Sort by date (newest first)
     GalleryState.allDisplayImages.sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 }
 
-// Make filterManager accessible for reload
-const filterManager = new FilterManager();
+// Gallery Manager - Single source of truth
+class GalleryManager {
+    private filterManager: FilterManager;
+    private imageLoader: ImageLoader | null = null;
+    private rawData: any[] = [];
 
-// Initialize the application
-(function mainInit() {
-    const imageLoader = new ImageLoader(8);
-    async function initialize(): Promise<void> {
-        const loadingIndicator = document.querySelector(
-            ".galleryLoadingInd"
-        ) as HTMLElement | null;
+    constructor() {
+        this.filterManager = new FilterManager();
+    }
+
+    async initialize(): Promise<void> {
+        const loadingIndicator = document.querySelector(".galleryLoadingInd") as HTMLElement | null;
+        
         try {
             const data = await fetchDisplay();
             if (!data) return;
-            galleryRawData = data;
-            reloadGallery();
+            
+            this.rawData = data;
+            this.reload();
+            
             if (loadingIndicator) loadingIndicator.style.display = "none";
-            const loadMoreButton = document.getElementById(
-                "loadMore"
-            ) as HTMLButtonElement | null;
-            if (loadMoreButton) {
-                loadMoreButton.style.display = "block";
-            }
+            const loadMoreButton = document.getElementById("loadMore") as HTMLButtonElement | null;
+            if (loadMoreButton) loadMoreButton.style.display = "block";
+            
         } catch (error) {
             console.error("Initialization failed:", error);
             if (loadingIndicator) {
                 loadingIndicator.innerHTML = `
-          <b>Failed to load images.</b> Which can only mean that something is broken beyond human comprehension.<br>
-          Notify Potto or something, they're not human. Probably.<br><br>
-          Tell them: <b>./gallery: ${error instanceof Error ? error.message : "Unknown error, you're cooked."}</b>
-          `;
+                    <b>Failed to load images.</b> Which can only mean that something is broken beyond human comprehension.<br>
+                    Notify Potto or something, they're not human. Probably.<br><br>
+                    Tell them: <b>./gallery: ${error instanceof Error ? error.message : "Unknown error, you're cooked."}</b>
+                `;
                 loadingIndicator.classList.remove("holdon");
             }
         }
     }
 
+    reload(): void {
+        devConsole("Reloading gallery with raw data length:", this.rawData.length);
+        
+        if (!this.rawData.length) return;
+        
+        // Clean up existing loader
+        if (this.imageLoader) {
+            this.imageLoader.destroy();
+        }
+        
+        // Clear gallery grid
+        const galleryGrid = document.getElementById("galleryGrid");
+        galleryGrid?.replaceChildren();
+        
+        // Refresh filters and process images
+        this.filterManager.refreshFilters();
+        processImages(this.rawData, this.filterManager);
+        
+        // Create new loader and load initial images
+        this.imageLoader = new ImageLoader(8);
+        this.imageLoader.loadInitialImages();
+    }
+
+    getFilterManager(): FilterManager {
+        return this.filterManager;
+    }
+}
+
+// Global gallery manager instance
+const galleryManager = new GalleryManager();
+
+// Export functions
+export function reloadGallery(): void {
+    galleryManager.reload();
+}
+
+export function getFilterManager(): FilterManager {
+    return galleryManager.getFilterManager();
+}
+
+// Initialize the application
+(function mainInit() {
+    async function initialize(): Promise<void> {
+        await galleryManager.initialize();
+    }
+
     // Start the application
     initialize();
-    document.addEventListener("astro:after-swap", () => {
-        initialize();
-    });
+    document.addEventListener("astro:after-swap", initialize);
 })();
