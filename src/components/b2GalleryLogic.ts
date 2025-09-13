@@ -68,7 +68,7 @@ class ImageLoader {
     start: number;
     batchSize: number;
     loading: boolean;
-    constructor(batchSize = 8) {
+    constructor(batchSize = 2) {
         this.start = 16;
         this.batchSize = batchSize;
         this.loading = false;
@@ -129,7 +129,7 @@ class ImageLoader {
             this.loading = false;
             if (loadMoreButton) {
                 loadMoreButton.innerHTML =
-                    "You reached the end..!<br><code>earliest index: 29 November 2020</code>";
+                    "You've reached the end..!<br><code>earliest index: 29 November 2020</code>";
                 loadMoreButton.style.border = "none";
             }
         }

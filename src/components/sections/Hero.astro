@@ -83,6 +83,7 @@ const heroImages = [
   }
 
   window.addEventListener("scroll", heroTransition);
+  heroTransition();
 
   function forwarder() {
     document
@@ -94,9 +95,8 @@ const heroImages = [
         });
       });
   }
-
-  heroTransition();
   forwarder();
+
   document.addEventListener("astro:before-swap", () => {
     heroTransition();
     forwarder();
