@@ -6,7 +6,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://commission.pottoart.uk',
+    site: 'https://pottoart.uk',
 
     //base: 'commission' //repo name
     //does fucking nothing.
