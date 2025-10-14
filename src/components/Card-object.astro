@@ -69,6 +69,8 @@ type BaseProps = {
 
     /** Image position in the card */
     position?: "left" | "right" | "top" | "bottom" | "center";
+    positionY?: string;
+    positionX?: string;
   };
 
   /** Override with FONT NAME only */
@@ -152,7 +154,12 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
 
 {
   isLinkCard ? (
-    <a target={href_target ? href_target : "_blank"} href={href} class={`cards linkcard ${className ?? ""}`}>
+    <!-- LinkCard -->
+    <a
+      target={href_target ? href_target : "_blank"}
+      href={href}
+      class={`cards linkcard ${className ?? ""}`}
+    >
       <div class="textcard invis bigger col">
         <b>{title ?? "?"}</b>
         <svg class="customarrow" viewBox="0 0 10 10">
@@ -164,12 +171,14 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
       </div>
     </a>
   ) : isLink || isBackgroundText ? (
+    <!-- Link or BackgroundText Card -->
     <div class={`${cardClasses} backgroundtext`}>
       {image && (
         <img
           src={image.src}
           alt={image.alt}
           class:list={["imgs", image.position && `${image.position}offset`]}
+          style={(image.positionX || image.positionY) ? {objectPosition: `${image.positionX ?? "50%"} ${image.positionY ?? "50%"}`,} : {}}
         />
       )}
       <div class="textcontainer">
@@ -212,12 +221,16 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
       </div>
     </div>
   ) : (
+    <!-- Default Card -->
     <div class={cardClasses}>
       {image && (
         <img
           src={image.src}
           alt={image.alt}
           class:list={["imgs", image.position && `${image.position}offset`]}
+          style={{
+            ...(image.positionX || image.positionY ? {objectPosition: `${image.positionX ?? "50%"} ${image.positionY ?? "50%"}`} : {})
+          }}
         />
       )}
       {/* if title AND parameter input exists */}

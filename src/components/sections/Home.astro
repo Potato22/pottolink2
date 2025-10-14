@@ -2,7 +2,6 @@
 import Gridbox from "../../layouts/Gridbox.astro";
 import CardObject from "../../components/Card-object.astro";
 import B2GalleryIndex from "../b2Gallery_index.astro";
-import B2Gallery from "../b2Gallery.astro";
 import MediaCard from "../MediaCard.astro";
 ---
 
@@ -14,9 +13,9 @@ import MediaCard from "../MediaCard.astro";
   <Gridbox id="about">
     <CardObject
       image={{
-        src: "/content/illus/artist.jpg",
-        alt: "Artist mary",
-        position: "center",
+        src: "/content/illus/just.jpg",
+        alt: "Mary on top of a rooftop",
+        positionX: "60%",
       }}
       size="extraTall"
     />
@@ -31,9 +30,9 @@ import MediaCard from "../MediaCard.astro";
     />
     <CardObject
       image={{
-        src: "/content/illus/justBanner.jpg",
-        alt: "min banner",
-        position: "right",
+        src: "/content/illus/birthdaycocoa.jpg",
+        alt: "Mareota with cocoa",
+        positionY: "35%",
       }}
       size="mediumWide"
     />
@@ -49,7 +48,17 @@ import MediaCard from "../MediaCard.astro";
       isLink
       href="#"
       image={{
-        src: "/content/linkosBanner/s.twt1.jpg",
+        src: "/content/linkosBanner/s.bsky.png",
+        alt: "min banner",
+        position: "left",
+      }}
+      content="bsky.potto"
+    />
+    <CardObject
+      isLink
+      href="#"
+      image={{
+        src: "/content/linkosBanner/s.twt1.png",
         alt: "min banner",
         position: "left",
       }}
@@ -59,21 +68,20 @@ import MediaCard from "../MediaCard.astro";
       isLink
       href="#"
       image={{
-        src: "/content/linkosBanner/s.twt2.jpg",
+        src: "/content/linkosBanner/s.twt2.png",
         alt: "min banner",
         position: "left",
       }}
       content="twitter.pottosmuts"
     />
+
     <CardObject
-      isLink
-      href="#"
       image={{
-        src: "/content/linkosBanner/s.bsky.jpg",
-        alt: "min banner",
-        position: "left",
+        src: "/content/illus/grow.jpg",
+        alt: "Mareota with cocoa",
+        position: "right",
       }}
-      content="bsky.potto"
+      size="superWide"
     />
   </Gridbox>
 

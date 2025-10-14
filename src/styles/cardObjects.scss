@@ -146,14 +146,10 @@
     grid-column: span 4/auto;
 
     @include breakpoint(tablet, square) {
-        grid-column: span 3/auto;
-    }
-
-    @include breakpoint(mobile) {
         grid-column: span 2/auto;
     }
 
-    @include breakpoint(tiny) {
+    @include breakpoint(tiny, mobile) {
         grid-column: span 1/auto;
     }
 }
