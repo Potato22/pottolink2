@@ -8,9 +8,12 @@ import ImageZoom from "../components/utils/imageZoom.astro";
 import DynamicNav from "../components/dynamicNav.astro";
 
 interface Props {
+  url?: string;
+  title?: string;
+  description?: string;
   thumb?: string;
 }
-const { thumb } = Astro.props;
+const { thumb, url, title, description } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,9 +25,9 @@ const { thumb } = Astro.props;
 
     <!-- OG -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://pottoart.uk/" />
-    <meta property="og:title" content="Potto" />
-    <meta property="og:description" content="Potto's Hub" />
+    <meta property="og:url" content={url ? url : "https://pottoart.uk/"} />
+    <meta property="og:title" content={title ? title : "Potto"} />
+    <meta property="og:description" content={description ? description : "Potto's Hub"} />
     <meta
       property="og:image"
       content={thumb ? `${import.meta.env.SITE}${thumb}` : `${import.meta.env.SITE}/content/thumb/thumb.jpg`}
@@ -32,10 +35,9 @@ const { thumb } = Astro.props;
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://pottoart.uk/" />
-    <meta property="twitter:title" content="Potto" />
-    <meta property="twitter:description" content="Potto's Hub"
-    />
+    <meta property="twitter:url" content={url ? url : "https://pottoart.uk/"} />
+    <meta property="twitter:title" content={title ? title : "Potto"} />
+    <meta property="twitter:description" content={description ? description : "Potto's Hub"} />
     <meta
       property="twitter:image"
       content={thumb ? `${import.meta.env.SITE}${thumb}` : `${import.meta.env.SITE}/content/thumb/thumb.jpg`}
