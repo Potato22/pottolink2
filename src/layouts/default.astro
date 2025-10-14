@@ -6,6 +6,11 @@ import QuirkyLoad from "../components/utils/quirkyLoad.astro";
 import Minitoast from "../components/utils/minitoast.astro";
 import ImageZoom from "../components/utils/imageZoom.astro";
 import DynamicNav from "../components/dynamicNav.astro";
+
+interface Props {
+  thumb?: string;
+}
+const { thumb } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,7 +27,7 @@ import DynamicNav from "../components/dynamicNav.astro";
     <meta property="og:description" content="Potto's Hub" />
     <meta
       property="og:image"
-      content="https://raw.githubusercontent.com/Potato22/commission/master/demo.jpg"
+      content={thumb ? `${import.meta.env.SITE}${thumb}` : `${import.meta.env.SITE}/content/thumb/thumb.jpg`}
     />
 
     <!-- Twitter -->
@@ -33,7 +38,7 @@ import DynamicNav from "../components/dynamicNav.astro";
     />
     <meta
       property="twitter:image"
-      content="https://raw.githubusercontent.com/Potato22/commission/master/demo.jpg"
+      content={thumb ? `${import.meta.env.SITE}${thumb}` : `${import.meta.env.SITE}/content/thumb/thumb.jpg`}
     />
 
     <link

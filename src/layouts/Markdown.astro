@@ -25,7 +25,7 @@ import QuirkyLoad from "../components/utils/quirkyLoad.astro";
     <meta property="og:description" content={description} />
     <meta
       property="og:image"
-      content="https://raw.githubusercontent.com/Potato22/commission/master/demo.jpg"
+      content={`${import.meta.env.SITE}/content/thumb/thumb.jpg`}
     />
 
     <!-- Twitter -->
@@ -35,7 +35,7 @@ import QuirkyLoad from "../components/utils/quirkyLoad.astro";
     <meta property="twitter:description" content={description} />
     <meta
       property="twitter:image"
-      content="https://raw.githubusercontent.com/Potato22/commission/master/demo.jpg"
+      content={`${import.meta.env.SITE}/content/thumb/thumb.jpg`}
     />
 
     <link

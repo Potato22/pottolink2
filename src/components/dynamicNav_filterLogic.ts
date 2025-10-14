@@ -121,9 +121,9 @@ function filterLogic() {
     const progBar = document.querySelector(".progBar") as HTMLElement | null;
     let timer: number;
     function invokeReload() {
+        window.scrollBy(0, -1000)
         refreshIndicator?.style.setProperty("display", "flex");
         progBar?.classList.remove("start");
-        //window.scrollTo(0, 0)
         setTimeout(() => {
             progBar?.classList.add("start");
             refreshIndicator?.classList.add("show");

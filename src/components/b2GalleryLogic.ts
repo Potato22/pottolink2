@@ -65,22 +65,59 @@ class FilterManager {
     }
 }
 
+/**
+ * I gave up bro
+ * Manages the loading and rendering of images in batches for a gallery grid,
+ * supporting infinite scroll and lazy loading via IntersectionObservers.
+ *
+ * - Handles initial and incremental image loading with customizable batch size.
+ * - Observes a sentinel element to trigger loading more images as the user scrolls.
+ * - Observes image elements for lazy loading, setting their `src` attribute when they enter the viewport.
+ * - Updates UI elements such as "Load More" button and gallery title based on loading state.
+ * - Cleans up observers and DOM elements when destroyed.
+ *
+ * @remarks
+ * This class relies on the global `GalleryState` object for image data and expects
+ * certain DOM elements (`galleryGrid`, `loadMore`, `.wideGoTitle`) to exist.
+ *
+ * @example
+ * ```typescript
+ * const loader = new ImageLoader(8);
+ * loader.loadInitialImages();
+ * // ...
+ * loader.destroy();
+ * ```
+ */
 class ImageLoader {
+    /** The current index offset for loading images from the `allDisplayImages` array. */
     private currentIndex: number = 0;
+    /** The number of images to load in each batch. */
     private readonly batchSize: number;
+    /** A flag to prevent multiple simultaneous loading operations. */
     private loading: boolean = false;
+    /** The IntersectionObserver for implementing infinite scrolling. */
     private intersectionObserver: IntersectionObserver | null = null;
+    /** The IntersectionObserver for lazy loading individual images. */
     private lazyLoadObserver: IntersectionObserver | null = null;
+    /** A placeholder element at the end of the gallery that triggers loading more images when it becomes visible. */
     private sentinel: HTMLElement | null = null;
+    /** A flag to indicate whether the loader has been destroyed to prevent further operations. */
     private isDestroyed: boolean = false;
 
+    /**
+     * Initializes the ImageLoader with a specified batch size.
+     * @param batchSize The number of images to load at a time. Defaults to 8.
+     */
     constructor(batchSize = 8) {
         this.batchSize = batchSize;
         this.setupObservers();
     }
 
+    /**
+     * Sets up the IntersectionObservers for infinite scrolling and lazy loading images.
+     */
     private setupObservers(): void {
-        // Observer for infinite scroll
+        // Observer for infinite scroll: triggers loading more images when the sentinel comes into view.
         this.intersectionObserver = new IntersectionObserver(
             (entries) => {
                 if (this.isDestroyed) return;
@@ -90,10 +127,10 @@ class ImageLoader {
                     }
                 });
             },
-            { rootMargin: "200px" }
+            { rootMargin: "200px" } // Load content when the sentinel is 200px away from the viewport.
         );
 
-        // Observer for lazy loading images
+        // Observer for lazy loading images: loads an image's `src` when it enters the viewport.
         this.lazyLoadObserver = new IntersectionObserver(
             (entries) => {
                 if (this.isDestroyed) return;
@@ -108,10 +145,13 @@ class ImageLoader {
                     }
                 });
             },
-            { rootMargin: "50px" }
+            { rootMargin: "50px" } // Load image when it is 50px away from the viewport.
         );
     }
 
+    /**
+     * Creates and appends the sentinel element to the DOM, which is used to detect when to load more images.
+     */
     private createSentinel(): void {
         this.sentinel = document.createElement("div");
         this.sentinel.id = "scroll-sentinel";
@@ -124,6 +164,9 @@ class ImageLoader {
         }
     }
 
+    /**
+     * Resets the loader to its initial state, clearing the current position and recreating the sentinel.
+     */
     reset(): void {
         this.currentIndex = 0;
         this.loading = false;
@@ -131,6 +174,9 @@ class ImageLoader {
         this.createSentinel();
     }
 
+    /**
+     * Removes the sentinel element from the DOM and stops observing it.
+     */
     private removeSentinel(): void {
         if (this.sentinel) {
             this.intersectionObserver?.unobserve(this.sentinel);
@@ -139,6 +185,9 @@ class ImageLoader {
         }
     }
 
+    /**
+     * Loads the initial set of images into the gallery.
+     */
     loadInitialImages(): void {
         const initialBatch = 16;
         this.renderImages(0, Math.min(initialBatch, GalleryState.allDisplayImages.length));
@@ -151,6 +200,9 @@ class ImageLoader {
         }
     }
 
+    /**
+     * Asynchronously loads the next batch of images.
+     */
     private async loadMoreImages(): Promise<void> {
         if (this.loading || this.currentIndex >= GalleryState.allDisplayImages.length || this.isDestroyed) {
             return;
@@ -176,6 +228,11 @@ class ImageLoader {
         }
     }
 
+    /**
+     * Renders a slice of images into the gallery grid.
+     * @param start The starting index of the images to render.
+     * @param end The ending index of the images to render.
+     */
     private renderImages(start: number, end: number): void {
         if (this.isDestroyed) return;
 
@@ -193,6 +250,11 @@ class ImageLoader {
         galleryGrid.appendChild(fragment);
     }
 
+    /**
+     * Creates an image container with a lazy-loadable image element.
+     * @param item The image data to create the container for.
+     * @returns The created HTMLElement.
+     */
     private createImageContainer(item: DisplayImage): HTMLElement {
         const container = document.createElement("div");
         container.className = "image-container";
@@ -221,6 +283,10 @@ class ImageLoader {
         return container;
     }
 
+    /**
+     * Updates the text content of the "Load More" button.
+     * @param text The text to display on the button.
+     */
     private updateLoadMoreButton(text: string): void {
         const loadMoreButton = document.getElementById("loadMore") as HTMLButtonElement | null;
         if (loadMoreButton) {
@@ -228,6 +294,9 @@ class ImageLoader {
         }
     }
 
+    /**
+     * Disables the loader when all images have been loaded, updating UI elements to reflect this state.
+     */
     private disableLoader(): void {
         const loadMoreButton = document.getElementById("loadMore") as HTMLButtonElement | null;
         const titleElement = document.querySelector(".wideGoTitle") as HTMLElement | null;
@@ -246,6 +315,9 @@ class ImageLoader {
         this.removeSentinel();
     }
 
+    /**
+     * Cleans up resources used by the ImageLoader, such as observers and DOM elements.
+     */
     destroy(): void {
         this.isDestroyed = true;
         this.intersectionObserver?.disconnect();
