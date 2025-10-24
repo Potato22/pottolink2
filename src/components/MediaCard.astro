@@ -11,6 +11,8 @@ interface Props {
     alt: string;
     /** Image position in the card */
     position?: "left" | "right" | "top" | "bottom" | "center";
+    positionY?: string;
+    positionX?: string;
   };
 
   video?: {
@@ -19,7 +21,7 @@ interface Props {
     /** Alt text for the video */
     alt: string;
     /** Video position in the card */
-    position?: "left" | "right" | "top" | "bottom" | "center";
+    //position?: "left" | "right" | "top" | "bottom" | "center";
 
     autoplay?: boolean;
 
@@ -27,6 +29,10 @@ interface Props {
   };
 }
 const { size, image, video }: Props = Astro.props;
+
+const cardClasses = ["interactive", "relative", "imgs", "cards", "imgcard"]
+  .filter(Boolean)
+  .join(" ");
 
 const cardSizes =
   size &&
@@ -45,10 +51,17 @@ const cardSizes =
     <img
       loading="lazy"
       data-aos="zoom-in"
-      class={`interactive relative imgs cards imgcard ${image.position} ${cardSizes || ""}`}
+      class={`${cardClasses} ${image.position} ${cardSizes || ""}`}
       src={image.src}
       data-title={image.alt}
       alt={image.alt}
+      style={{
+        ...(image.positionX || image.positionY
+          ? {
+              objectPosition: `${image.positionX ?? "50%"} ${image.positionY ?? "50%"}`,
+            }
+          : {}),
+      }}
     />
   )
 }
@@ -56,14 +69,52 @@ const cardSizes =
   video && (
     <video
       preload="none"
-      autoplay
       muted
       loop
-      class={`interactive relative imgs cards imgcard ${video.position}`}
-      src={video.src}
+      class={`${cardClasses} ${cardSizes || ""} lazy-video`}
+      data-src={video.src}
       data-title={video.alt}
       data-vol={video.volume || 0.8}
       aria-valuemax={video.volume || 0.8}
     />
   )
 }
+
+<script>
+  const videos = document.querySelectorAll("video.lazy-video");
+
+  if ("IntersectionObserver" in window) {
+    const videoObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+
+          if (entry.isIntersecting) {
+            if (!video.src && video.dataset.src) {
+              video.src = video.dataset.src;
+              video.load();
+            }
+            video.play().catch(() => {}); //ignore play errors
+          } else {
+            video.pause();
+            video.currentTime = 0;
+            //console.log(video.dataset.title + " paused");
+          }
+        });
+      },
+      {
+        rootMargin: "50px", // Start loading slightly before entering viewport
+      }
+    );
+
+    videos.forEach((video) => videoObserver.observe(video));
+  } else {
+    // Fallback for browsers without IntersectionObserver
+    videos.forEach((video) => {
+      const videoEl = video as HTMLVideoElement;
+      if (videoEl.dataset.src) {
+        videoEl.src = videoEl.dataset.src;
+      }
+    });
+  }
+</script>

@@ -317,7 +317,7 @@ hr {
   color: var(--fore);
   opacity: .5;
   height: 0;
-  font-family: var(--contentSecondary);
+  font-family: var(--contentSecondary) !important;
   text-align: center;
   //animation: holdon .5s 12, toolong 6s linear forwards 3s;
 }

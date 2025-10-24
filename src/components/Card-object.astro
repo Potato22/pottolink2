@@ -30,6 +30,7 @@ type BaseProps = {
 
   /** Text alignment for title and content */
   alignText?: "left" | "center" | "right";
+  alignTextVert?: "top" | "center" | "bottom";
 
   /** Title text for the card */
   title?: string;
@@ -100,6 +101,7 @@ const {
   isBackgroundText = false,
   size,
   alignText = "left",
+  alignTextVert,
   title,
   titleSize = "bigger",
   content,
@@ -128,6 +130,12 @@ const cardClasses = [
   "cards",
   isInvisible && "invis",
   isTextCard && "textcard",
+  alignTextVert && "verticalAligment " +
+  {
+    top: "alignTop",
+    center: "alignCenter",
+    bottom: "alignBottom",
+  }[alignTextVert],
   size &&
     {
       tall: "tallcard",
@@ -178,7 +186,9 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
           src={image.src}
           alt={image.alt}
           class:list={["imgs", image.position && `${image.position}offset`]}
-          style={(image.positionX || image.positionY) ? {objectPosition: `${image.positionX ?? "50%"} ${image.positionY ?? "50%"}`,} : {}}
+          style={{
+            ...(image.positionX || image.positionY ? {objectPosition: `${image.positionX ?? "50%"} ${image.positionY ?? "50%"}`} : {})
+          }}
         />
       )}
       <div class="textcontainer">

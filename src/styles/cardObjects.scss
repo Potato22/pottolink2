@@ -312,7 +312,7 @@
 
 .tcreg {
     font-size: 1.2rem;
-    font-family: var(--contentsecondary);
+    font-family: var(--content);
 
     @include breakpoint(tiny, mobile) {
         font-size: 1rem;
@@ -339,13 +339,13 @@
 }
 
 .tcsubquote {
-    font-family: var(--contentsecondary);
+    font-family: var(--contentSecondary);
     font-size: 1rem;
     font-style: italic;
 }
 
 .tcquotation {
-    font-family: var(--contentsecondary);
+    font-family: var(--contentSecondary);
     font-size: 1rem;
     font-style: italic;
     margin-top: 1em;
