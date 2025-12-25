@@ -164,8 +164,8 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
   isLinkCard ? (
     <!-- LinkCard -->
     <a
-      target={href_target ? href_target : "_blank"}
       href={href}
+      target={href_target ? href_target : "_blank"}
       class={`cards linkcard ${className ?? ""}`}
     >
       <div class="textcard invis bigger col">
