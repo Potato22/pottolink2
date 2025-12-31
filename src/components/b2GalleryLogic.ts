@@ -470,9 +470,9 @@ class GalleryManager {
             console.error("Initialization failed:", error);
             if (loadingIndicator) {
                 loadingIndicator.innerHTML = `
-                    <b>Failed to load images.</b> Which can only mean that something is broken beyond human comprehension.<br>
-                    Notify Potto or something, they're not human. Probably.<br><br>
-                    Tell them: <b>./gallery: ${error instanceof Error ? error.message : "Unknown error, you're cooked."}</b>
+                    <b>Failed to load images.</b> Which can only mean that something is broken beyond comprehension.<br>
+                    Notify Potto or something, they're the dumbass. Probably.<br><br>
+                    Tell them: <b>./${window.location.href}/b2GL: ${error instanceof Error ? error.message : "Unknown error, it's cooked."}</b>
                 `;
                 loadingIndicator.classList.remove("holdon");
             }

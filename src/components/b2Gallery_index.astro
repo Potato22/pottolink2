@@ -181,7 +181,7 @@ import Gridbox from "../layouts/Gridbox.astro";
         const loadingInd = getGalleryLoadingInd();
         if (loadingInd) {
           loadingInd.innerHTML =
-            "Fetching was successful but something still went wrong, not good news tell you that now. " +
+            "Fetching was successful but something still went wrong, not good news. " +
             error;
           loadingInd.classList.remove("holdon");
         }
