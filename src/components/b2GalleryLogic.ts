@@ -367,7 +367,10 @@ async function fetchDisplay(): Promise<any[]> {
         const timeoutId = setTimeout(() => controller.abort(), 30000);
 
         const response = await fetch(
-            "https://pottob2-dispgallery.pottoart.workers.dev/api/v1/list_all_files?maxFileCount=800",
+            "http://127.0.0.1:8787/api/v1/list_all_files?maxFileCount=2000",
+            // "https://pottob2-dispgallery.pottoart.workers.dev/api/v1/list_all_files?maxFileCount=2000",
+
+            //maxFileCount might get deprecated I can't be arsed
             { signal: controller.signal }
         );
 
@@ -437,9 +440,9 @@ function processImages(data: any[], filterManager: FilterManager): void {
     });
 
     // Sort by date (newest first)
-    GalleryState.allDisplayImages.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    // GalleryState.allDisplayImages.sort(
+    //     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    // );
 }
 
 // Gallery Manager - Single source of truth
@@ -471,7 +474,7 @@ class GalleryManager {
             if (loadingIndicator) {
                 loadingIndicator.innerHTML = `
                     <b>Failed to load images.</b> Which can only mean that something is broken beyond comprehension.<br>
-                    Notify Potto or something, they're the dumbass. Probably.<br><br>
+                    Notify Potto or something, they're the dumbass.<br><br>
                     Tell them: <b>./${window.location.href}/b2GL: ${error instanceof Error ? error.message : "Unknown error, it's cooked."}</b>
                 `;
                 loadingIndicator.classList.remove("holdon");

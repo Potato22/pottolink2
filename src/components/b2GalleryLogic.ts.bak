@@ -259,7 +259,7 @@ async function fetchDisplay(): Promise<any[]> {
         const timeoutId = setTimeout(() => controller.abort(), 30000);
 
         const response = await fetch(
-            "https://pottob2-dispgallery.pottoart.workers.dev/api/v1/list_all_files?maxFileCount=800",
+            "http://127.0.0.1:8787/api/v1/list_all_files?maxFileCount=800",
             { signal: controller.signal }
         );
 

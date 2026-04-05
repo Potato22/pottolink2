@@ -33,7 +33,10 @@ import Gridbox from "../layouts/Gridbox.astro";
       }
       try {
         const response = await fetch(
-          "https://pottob2-dispgallery.pottoart.workers.dev/api/v1/list_all_files?maxFileCount=8"
+          "http://127.0.0.1:8787/api/v1/list_all_files?maxFileCount=800"
+          // "https://pottob2-dispgallery.pottoart.workers.dev/api/v1/list_all_files?maxFileCount=800"
+
+          //maxFileCount might get deprecated I can't be arsed
         );
         if (!response.ok) {
           if (loadingInd) {
@@ -124,9 +127,9 @@ import Gridbox from "../layouts/Gridbox.astro";
             }
           });
 
-          displayImages.sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-          );
+          // displayImages.sort(
+          //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          // );
           const displayCount = displayImages.slice(0, 8);
 
           // console.log("Display Data:", displayCount);
