@@ -162,7 +162,7 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
 
 {
   isLinkCard ? (
-    <!-- LinkCard -->
+    //<!-- LinkCard -->
     <a
       href={href}
       target={href_target ? href_target : "_blank"}
@@ -179,7 +179,7 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
       </div>
     </a>
   ) : isLink || isBackgroundText ? (
-    <!-- Link or BackgroundText Card -->
+    //<!-- Link or BackgroundText Card -->
     <div class={`${cardClasses} backgroundtext`}>
       {image && (
         <img
@@ -231,7 +231,7 @@ const contentClasses = [`tc${contentSize}`].filter(Boolean).join(" ");
       </div>
     </div>
   ) : (
-    <!-- Default Card -->
+    //<!-- Default Card -->
     <div class={cardClasses}>
       {image && (
         <img
